@@ -38,6 +38,22 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+
+/**
+ * Activity for tracking and managing task progress within a project. This activity displays a list
+ * of tasks using a RecyclerView and provides functionality for filtering, searching, and managing
+ * tasks through various UI components.
+ * <p>
+ * Core features:
+ * - Display tasks in card format using {@link CardAdapter}
+ * - Task filtering by status
+ * - Task searching by title
+ * - Adding new tasks
+ * - Managing task comments
+ * - Removing tasks
+ * <p>
+ * Layout file: activity_track_progress.xml
+ */
 public class TrackProgressActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private FloatingActionButton fabAdd;
@@ -69,6 +85,13 @@ public class TrackProgressActivity extends AppCompatActivity {
         setupStatusFilter();
     }
 
+    /**
+     * Initializes all UI components and sets up the repository.
+     * - Sets up toolbar with search and filter buttons
+     * - Initializes RecyclerView
+     * - Sets up SearchView and StatusFilterSpinner (initially hidden)
+     * - Configures FAB for adding new tasks
+     */
     private void initialize() {
         repository = new MockProgressTrackingRepository();
 
@@ -98,6 +121,13 @@ public class TrackProgressActivity extends AppCompatActivity {
         fabAdd.setOnClickListener(v -> showAddTaskDialog());
     }
 
+    /**
+     * Configures the RecyclerView with CardAdapter and sets up click listeners.
+     * - Initializes empty task list
+     * - Sets LinearLayoutManager
+     * - Configures item click to open TaskDetailActivity
+     * - Sets up more options menu for each task
+     */
     private void setupRecyclerView() {
         taskCards = new ArrayList<>();
         adapter = new CardAdapter(this, taskCards);
@@ -115,6 +145,14 @@ public class TrackProgressActivity extends AppCompatActivity {
         adapter.setOnMoreClickListener((item, view) -> showPopupMenu(view, item));
     }
 
+    /**
+     * Loads all tasks for the current project from the repository.
+     * For each task, creates a CardData object containing:
+     * - Title (line1)
+     * - Assigned employee name (line2)
+     * - Project ID (line3)
+     * - Status icon
+     */
     private void loadTasks() {
         repository.getAllTasks(projectId, new OperationCallback<List<Task>>() {
             @Override
@@ -141,6 +179,12 @@ public class TrackProgressActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Returns appropriate drawable resource based on task status.
+     *
+     * @param status The TaskStatus to get an icon for
+     * @return Drawable representing the task status
+     */
     private Drawable getStatusIcon(TaskStatus status) {
         int iconRes;
         switch (status) {
@@ -159,6 +203,15 @@ public class TrackProgressActivity extends AppCompatActivity {
         return ContextCompat.getDrawable(this, iconRes);
     }
 
+    /**
+     * Displays popup menu for task management options.
+     * Options include:
+     * - Remove task
+     * - View/add comments
+     *
+     * @param view Anchor view for popup menu
+     * @param item CardData containing task information
+     */
     private void showPopupMenu(View view, CardData item) {
         PopupMenu popup = new PopupMenu(this, view);
         popup.inflate(R.menu.menu_task);
@@ -180,6 +233,13 @@ public class TrackProgressActivity extends AppCompatActivity {
         popup.show();
     }
 
+
+    /**
+     * Removes task from project using repository.
+     * Refreshes task list on success.
+     *
+     * @param taskId ID of task to remove
+     */
     private void removeTask(String taskId) {
         repository.removeTask(taskId, new OperationCallback<Boolean>() {
             @Override
@@ -197,6 +257,15 @@ public class TrackProgressActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Shows bottom sheet dialog for task comments.
+     * Features:
+     * - RecyclerView displaying existing comments
+     * - Input field for new comments
+     * - Send button for adding comments
+     *
+     * @param task Task to show/add comments for
+     */
     private void showComments(Task task) {
         BottomSheetDialog bottomSheet = new BottomSheetDialog(this);
         View commentView = getLayoutInflater().inflate(R.layout.bottom_sheet_comments, null);
@@ -224,6 +293,13 @@ public class TrackProgressActivity extends AppCompatActivity {
         bottomSheet.show();
     }
 
+
+    /**
+     * Configures search functionality in toolbar.
+     * - Shows/hides SearchView
+     * - Handles search queries
+     * - Manages toolbar title visibility
+     */
     private void setupSearch() {
         btnSearch.setOnClickListener(v -> {
             if (!isSearchActive) {
@@ -257,6 +333,12 @@ public class TrackProgressActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Performs search on tasks using repository.
+     * Updates UI with filtered results.
+     *
+     * @param query Search query string
+     */
     private void performSearch(String query) {
         if (query.isEmpty()) {
             loadTasks();
@@ -287,6 +369,12 @@ public class TrackProgressActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Sets up status filter spinner in toolbar.
+     * - Shows/hides spinner
+     * - Handles status selection
+     * - Updates task list based on selected status
+     */
     private void setupStatusFilter() {
         btnFilter.setOnClickListener(v -> {
             if (statusFilterSpinner.getVisibility() == View.VISIBLE) {
@@ -310,6 +398,12 @@ public class TrackProgressActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Filters tasks by status using repository.
+     * Updates UI with filtered results.
+     *
+     * @param status TaskStatus to filter by
+     */
     private void filterByStatus(TaskStatus status) {
         repository.filterTasksByStatus(projectId, status, new OperationCallback<List<Task>>() {
             @Override
@@ -335,6 +429,15 @@ public class TrackProgressActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Shows dialog for adding new task.
+     * Dialog includes:
+     * - Title input
+     * - Description input
+     * - Priority selector
+     * - Due date picker
+     * Creates new task on confirmation
+     */
     private void showAddTaskDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_task, null);
