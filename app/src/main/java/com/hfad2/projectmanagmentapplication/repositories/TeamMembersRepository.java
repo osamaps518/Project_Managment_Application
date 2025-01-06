@@ -22,5 +22,7 @@ public interface TeamMembersRepository {
     void assignTask(String projectId, String employeeId, Task task, OperationCallback<Boolean> callback);
 
     void getAssignedTask(String projectId, String employeeId, OperationCallback<Task> callback);
+
+    void findEmployee(String userId, OperationCallback<Employee> callback);
 }
 

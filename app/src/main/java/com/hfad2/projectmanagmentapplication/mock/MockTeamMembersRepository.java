@@ -146,4 +146,19 @@ public class MockTeamMembersRepository implements TeamMembersRepository {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Project manager not found"));
     }
+
+    @Override
+    public void findEmployee(String userId, OperationCallback<Employee> callback) {
+        mainHandler.postDelayed(() -> {
+            try {
+                Employee employee = mockData.getEmployees().stream()
+                        .filter(e -> e.getUserId().equals(userId))
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
+                callback.onSuccess(employee);
+            } catch (Exception e) {
+                callback.onError(e.getMessage());
+            }
+        }, 500);
+    }
 }

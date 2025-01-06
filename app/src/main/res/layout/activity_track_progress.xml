@@ -18,7 +18,7 @@
 
     <!-- RecyclerView for the list of members -->
     <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_members"
+            android:id="@+id/recycler_tasks"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:padding="8dp"
@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            app:srcCompat="@drawable/person_add"
+            app:srcCompat="@drawable/ic_add_task"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

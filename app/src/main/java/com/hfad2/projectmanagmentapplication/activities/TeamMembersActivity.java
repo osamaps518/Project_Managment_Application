@@ -6,12 +6,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -112,6 +115,8 @@ public class TeamMembersActivity extends AppCompatActivity {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         roleFilterSpinner.setAdapter(spinnerAdapter);
         roleFilterSpinner.setVisibility(View.GONE);  // Hidden by default
+
+        fabAdd.setOnClickListener(v -> showAddMemberDialog());
     }
 
     /**
@@ -152,6 +157,7 @@ public class TeamMembersActivity extends AppCompatActivity {
                 memberCards.clear();
                 for (Employee employee : employees) {
                     CardData card = new CardData();
+                    // TODO: This needs to be adjusted, the first represents username, second line represents role, and the third line represents the task assigned to the user
                     card.setLine1(employee.getFullName());
                     card.setLine2(employee.getUserName());
                     // TODO: Add profile image URL
@@ -394,5 +400,58 @@ public class TeamMembersActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void showAddMemberDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_member, null);
+
+        EditText userIdInput = dialogView.findViewById(R.id.user_id_input);
+        Button searchButton = dialogView.findViewById(R.id.btn_search_user);
+        TextView userInfoView = dialogView.findViewById(R.id.user_info);
+
+        final Employee[] selectedEmployee = new Employee[1];
+
+        searchButton.setOnClickListener(v -> {
+            String userId = userIdInput.getText().toString();
+            repository.findEmployee(userId, new OperationCallback<Employee>() {
+                @Override
+                public void onSuccess(Employee employee) {
+                    selectedEmployee[0] = employee;
+                    userInfoView.setText("Found: " + employee.getFullName());
+                    userInfoView.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onError(String error) {
+                    userInfoView.setText("User not found");
+                    userInfoView.setVisibility(View.VISIBLE);
+                    selectedEmployee[0] = null;
+                }
+            });
+        });
+
+        builder.setView(dialogView)
+                .setTitle("Add Team Member")
+                .setPositiveButton("Add", (dialog, which) -> {
+                    if (selectedEmployee[0] != null) {
+                        repository.addMember(projectId, selectedEmployee[0].getUserId(),
+                                new OperationCallback<Boolean>() {
+                                    @Override
+                                    public void onSuccess(Boolean result) {
+                                        loadTeamMembers();
+                                    }
+
+                                    @Override
+                                    public void onError(String error) {
+                                        Toast.makeText(TeamMembersActivity.this,
+                                                "Failed to add member: " + error,
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 }

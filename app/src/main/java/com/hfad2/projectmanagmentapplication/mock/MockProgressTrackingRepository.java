@@ -5,10 +5,12 @@ import android.os.Looper;
 
 import com.hfad2.projectmanagmentapplication.models.Project;
 import com.hfad2.projectmanagmentapplication.models.Task;
+import com.hfad2.projectmanagmentapplication.models.TaskPriority;
 import com.hfad2.projectmanagmentapplication.models.TaskStatus;
 import com.hfad2.projectmanagmentapplication.repositories.OperationCallback;
 import com.hfad2.projectmanagmentapplication.repositories.ProgressTrackingRepository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -102,5 +104,13 @@ public class MockProgressTrackingRepository implements ProgressTrackingRepositor
                 .filter(t -> t.getTaskId().equals(taskId))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Task not found"));
+    }
+
+    @Override
+    public Task createTask(String projectId, String title, String description, TaskPriority priority,
+                           Date dueDate) {
+        Project project = findProject(projectId);
+        Task task = project.createTask(title, description, priority, dueDate);
+        return task;
     }
 }

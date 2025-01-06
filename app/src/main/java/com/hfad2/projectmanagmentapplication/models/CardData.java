@@ -64,4 +64,8 @@ public class CardData {
     public void setData(Object data) {
         this.data = data;
     }
+
+    public void setImage(Drawable statusIcon) {
+        this.image = statusIcon;
+    }
 }

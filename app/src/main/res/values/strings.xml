@@ -11,6 +11,11 @@
     <string name="mark_as_inactive">Mark as Inactive</string>
     <string name="view_assigned_task">View Assigned Task</string>
     <string name="remove_member">Remove Member</string>
+    <string name="remove_task">Remove Task</string>
+    <string name="view_comments">View Comments</string>
+    <string name="add_a_comment">Add a comment...</string>
+    <string name="send_comment">Send comment</string>
+    <string name="comments">Comments</string>
     <string-array name="role_filters">
         <item>All Roles</item>
         <item>Developer</item>

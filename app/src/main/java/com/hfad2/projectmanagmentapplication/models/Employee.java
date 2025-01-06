@@ -24,6 +24,10 @@ public class Employee {
         this.status = EmployeeStatus.AVAILABLE;
     }
 
+    public User getUserDetails() {
+        return user;
+    }
+
     public void updateTaskStatus(Task task, TaskStatus newStatus) {
         task.setStatus(newStatus);
     }
