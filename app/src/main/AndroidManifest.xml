@@ -13,6 +13,18 @@
             android:theme="@style/Theme.ProjectManagmentApplication"
             tools:targetApi="31">
         <activity
+                android:name=".activities.SendMessagesActivity"
+                android:exported="false" />
+        <activity
+                android:name=".activities.TeamMembersActivity"
+                android:exported="false" />
+        <activity
+                android:name=".activities.NotificationsActivity"
+                android:exported="false" />
+        <activity
+                android:name=".activities.TrackProgressActivity"
+                android:exported="false" />
+        <activity
                 android:name=".MainActivity"
                 android:exported="true">
             <intent-filter>

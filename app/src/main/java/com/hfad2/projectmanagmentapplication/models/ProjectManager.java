@@ -27,7 +27,7 @@ public class ProjectManager {
         return newProject;
     }
 
-    private void assignTaskToEmployee(Task task, Employee employee) {
+    public void assignTaskToEmployee(Task task, Employee employee) {
         if (!employee.isInProject(task.getProject())) {
             throw new IllegalArgumentException(
                     "Cannot assign task to employee who is not part of the project"

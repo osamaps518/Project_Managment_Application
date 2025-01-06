@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.appbar.MaterialToolbar xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/toolbar"
+        style="@style/Widget.App.Toolbar">
+
+    <!-- Main horizontal container for all toolbar items -->
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+        <!-- Menu Button -->
+        <ImageButton
+                android:id="@+id/btn_menu"
+                style="@style/Widget.App.Toolbar.Icon"
+                android:src="@drawable/ic_menu"
+                app:tint="@color/font_color"
+                android:contentDescription="Menu" />
+
+        <!-- Title - will expand to fill available space -->
+        <TextView
+                android:id="@+id/toolbar_title"
+                style="@style/Widget.App.Toolbar.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="Team Members"
+                android:textColor="@color/font_color" />
+
+        <!-- Search Icon -->
+        <ImageButton
+                android:id="@+id/btn_search"
+                style="@style/Widget.App.Toolbar.Icon"
+                android:src="@drawable/ic_search"
+                app:tint="@color/font_color"
+                android:contentDescription="Search" />
+
+        <!-- Filter Icon -->
+        <ImageButton
+                android:id="@+id/btn_filter"
+                style="@style/Widget.App.Toolbar.Icon"
+                android:src="@drawable/ic_filter"
+                app:tint="@color/font_color"
+                android:contentDescription="Filter" />
+
+        <!-- Notifications Icon -->
+        <ImageButton
+                android:id="@+id/btn_notifications"
+                style="@style/Widget.App.Toolbar.Icon"
+                android:src="@drawable/ic_notifications"
+                app:tint="@color/font_color"
+                android:contentDescription="Notifications" />
+
+    </LinearLayout>
+
+</com.google.android.material.appbar.MaterialToolbar>

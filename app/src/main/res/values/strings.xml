@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Project Managment Application</string>
+    <string name="nav_progress">Track Progress</string>
+    <string name="nav_messages">Send Message</string>
+    <string name="nav_notifications">Notifications</string>
+    <string name="nav_team_members">Team Members</string>
+    <string name="to">to</string>
+    <string name="from">from</string>
+    <string name="subject">subject</string>
+    <string name="content">content</string>
 </resources>
