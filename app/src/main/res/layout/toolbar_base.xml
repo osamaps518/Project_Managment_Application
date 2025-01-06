@@ -1,60 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.appbar.MaterialToolbar xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/toolbar"
         style="@style/Widget.App.Toolbar">
 
-    <!-- Main horizontal container for all toolbar items -->
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:layout_height="match_parent">
 
-        <!-- Menu Button -->
+        <!-- Menu Button - anchored to the start -->
         <ImageButton
                 android:id="@+id/btn_menu"
                 style="@style/Widget.App.Toolbar.Icon"
                 android:src="@drawable/ic_menu"
                 app:tint="@color/font_color"
-                android:contentDescription="Menu" />
+                android:contentDescription="Menu"
+                android:layout_marginTop="8dp"
+                android:layout_height="0dp"
+                app:layout_constraintEnd_toStartOf="@+id/toolbar_title"
+                android:layout_width="0dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginEnd="30dp" />
 
-        <!-- Title - will expand to fill available space -->
+        <!-- Title - centered between menu and search -->
+
+        <!-- Filter Icon - anchored to the end -->
+
         <TextView
                 android:id="@+id/toolbar_title"
                 style="@style/Widget.App.Toolbar.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
                 android:text="Team Members"
-                android:textColor="@color/font_color" />
+                android:textColor="@color/font_color"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/btn_menu"
+                app:layout_constraintEnd_toStartOf="@+id/btn_search"
+                android:layout_marginEnd="80dp" />
 
-        <!-- Search Icon -->
-        <ImageButton
-                android:id="@+id/btn_search"
-                style="@style/Widget.App.Toolbar.Icon"
-                android:src="@drawable/ic_search"
-                app:tint="@color/font_color"
-                android:contentDescription="Search" />
-
-        <!-- Filter Icon -->
         <ImageButton
                 android:id="@+id/btn_filter"
                 style="@style/Widget.App.Toolbar.Icon"
                 android:src="@drawable/ic_filter"
                 app:tint="@color/font_color"
-                android:contentDescription="Filter" />
+                android:contentDescription="Filter"
+                android:layout_marginTop="8dp"
+                app:layout_constraintStart_toEndOf="@+id/btn_search"
+                android:layout_height="0dp"
+                android:layout_width="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
-        <!-- Notifications Icon -->
+        <!-- Search Icon - anchored before filter -->
         <ImageButton
-                android:id="@+id/btn_notifications"
+                android:id="@+id/btn_search"
                 style="@style/Widget.App.Toolbar.Icon"
-                android:src="@drawable/ic_notifications"
+                android:src="@drawable/ic_search"
                 app:tint="@color/font_color"
-                android:contentDescription="Notifications" />
+                android:contentDescription="Search"
+                android:layout_marginTop="8dp"
+                app:layout_constraintStart_toEndOf="@+id/toolbar_title"
+                android:layout_height="0dp"
+                app:layout_constraintEnd_toStartOf="@+id/btn_filter"
+                android:layout_width="0dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.appbar.MaterialToolbar>

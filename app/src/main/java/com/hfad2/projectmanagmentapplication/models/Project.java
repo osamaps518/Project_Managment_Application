@@ -73,4 +73,8 @@ public class Project {
     public List<Employee> getTeamMembers() {
         return teamMembers;
     }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
 }

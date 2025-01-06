@@ -1,6 +1,7 @@
 package com.hfad2.projectmanagmentapplication.repositories;
 
 import com.hfad2.projectmanagmentapplication.models.Employee;
+import com.hfad2.projectmanagmentapplication.models.Task;
 
 import java.util.List;
 
@@ -23,9 +24,3 @@ public interface TeamMembersRepository {
     void getAssignedTask(String projectId, String employeeId, OperationCallback<Task> callback);
 }
 
-// Callback interface
-public interface OperationCallback<T> {
-    void onSuccess(T result);
-
-    void onError(String error);
-}

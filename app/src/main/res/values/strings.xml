@@ -8,4 +8,14 @@
     <string name="from">from</string>
     <string name="subject">subject</string>
     <string name="content">content</string>
+    <string name="mark_as_inactive">Mark as Inactive</string>
+    <string name="view_assigned_task">View Assigned Task</string>
+    <string name="remove_member">Remove Member</string>
+    <string-array name="role_filters">
+        <item>All Roles</item>
+        <item>Developer</item>
+        <item>Designer</item>
+        <item>Manager</item>
+        <item>QA Engineer</item>
+    </string-array>
 </resources>

@@ -17,8 +17,6 @@
             app:layout_constraintTop_toTopOf="parent" />
 
     <!-- RecyclerView for the list of members -->
-
-    <!-- FAB for adding new members -->
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_members"
             android:layout_width="match_parent"
@@ -30,6 +28,7 @@
             tools:layout_editor_absoluteX="0dp"
             app:layout_constraintVertical_bias="1.0" />
 
+    <!-- FAB for adding new members -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_add"
             style="@style/Widget.App.FloatingActionButton"
