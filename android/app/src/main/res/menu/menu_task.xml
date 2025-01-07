@@ -6,4 +6,7 @@
     <item
             android:id="@+id/action_comments"
             android:title="@string/view_comments" />
+    <item
+            android:id="@+id/action_complete"
+            android:title="@string/mark_as_completed" />
 </menu>

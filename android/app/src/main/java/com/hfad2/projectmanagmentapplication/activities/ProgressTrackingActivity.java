@@ -32,6 +32,7 @@ import com.hfad2.projectmanagmentapplication.models.TaskPriority;
 import com.hfad2.projectmanagmentapplication.models.TaskStatus;
 import com.hfad2.projectmanagmentapplication.repositories.OperationCallback;
 import com.hfad2.projectmanagmentapplication.repositories.ProgressTrackingRepository;
+import com.hfad2.projectmanagmentapplication.repositories.VolleyProgressTrackingRepository;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -92,7 +93,7 @@ public class ProgressTrackingActivity extends BaseProjectActivity {
      * - Configures FAB for adding new tasks
      */
     private void initialize() {
-        repository = new MockProgressTrackingRepository();
+        repository = new VolleyProgressTrackingRepository(this);
 
         recyclerView = findViewById(R.id.recycler_tasks);
         fabAdd = findViewById(R.id.fab_add);
@@ -203,14 +204,12 @@ public class ProgressTrackingActivity extends BaseProjectActivity {
     }
 
     /**
-     * Displays popup menu for task management options.
-     * Options include:
-     * - Remove task
-     * - View/add comments
+    * Shows a popup menu for a task with options
+     * to remove, view comments, or mark as complete.
      *
-     * @param view Anchor view for popup menu
-     * @param item CardData containing task information
-     */
+    * @param view The view to anchor the popup menu
+    * @param item The CardData item representing the task
+    */
     private void showPopupMenu(View view, CardData item) {
         PopupMenu popup = new PopupMenu(this, view);
         popup.inflate(R.menu.menu_task);
@@ -225,6 +224,9 @@ public class ProgressTrackingActivity extends BaseProjectActivity {
             } else if (itemId == R.id.action_comments) {
                 showComments(task);
                 return true;
+            } else if (itemId == R.id.action_complete) {
+                markTaskComplete(task.getTaskId());
+                return true;
             }
             return false;
         });
@@ -232,6 +234,31 @@ public class ProgressTrackingActivity extends BaseProjectActivity {
         popup.show();
     }
 
+
+
+    /**
+     * Marks a task as complete by updating its status in the repository.
+     * On success, reloads the task list and shows a success message.
+     * On error, shows an error message.
+     *
+     * @param taskId The ID of the task to mark as complete
+     */
+    private void markTaskComplete(String taskId) {
+        repository.markTaskAsComplete(taskId, new OperationCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                loadTasks();
+                Toast.makeText(ProgressTrackingActivity.this,
+                        "Task marked as complete", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(ProgressTrackingActivity.this,
+                        "Error marking task complete: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     /**
      * Removes task from project using repository.

@@ -43,3 +43,13 @@ CREATE TABLE tasks (
     FOREIGN KEY (project_id) REFERENCES projects(project_id),
     FOREIGN KEY (assigned_to) REFERENCES users(user_id)
 );
+
+CREATE TABLE task_comments (
+    comment_id VARCHAR(36) PRIMARY KEY,
+    task_id VARCHAR(36),
+    author_id VARCHAR(36),
+    content TEXT,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (task_id) REFERENCES tasks(task_id),
+    FOREIGN KEY (author_id) REFERENCES users(user_id)
+);

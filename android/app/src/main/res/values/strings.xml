@@ -19,6 +19,7 @@
     <string name="delete">Delete</string>
     <string name="view_sender_profile">View Sender Profile</string>
     <string name="view_task_details">View Task Details</string>
+    <string name="mark_as_completed">Mark as Completed</string>
     <string-array name="role_filters">
         <item>All Roles</item>
         <item>Developer</item>
