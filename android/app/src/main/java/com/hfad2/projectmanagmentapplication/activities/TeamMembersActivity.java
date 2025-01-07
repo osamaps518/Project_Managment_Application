@@ -28,6 +28,7 @@ import com.hfad2.projectmanagmentapplication.models.Employee;
 import com.hfad2.projectmanagmentapplication.models.Task;
 import com.hfad2.projectmanagmentapplication.repositories.OperationCallback;
 import com.hfad2.projectmanagmentapplication.repositories.TeamMembersRepository;
+import com.hfad2.projectmanagmentapplication.repositories.VolleyTeamMembersRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +85,7 @@ public class TeamMembersActivity extends BaseProjectActivity {
      */
     private void initialize() {
         // Initialize repository
-        repository = new MockTeamMembersRepository();
+        repository = new VolleyTeamMembersRepository(this);
 
         // Initialize views
         recyclerView = findViewById(R.id.recycler_members);
