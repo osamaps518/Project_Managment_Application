@@ -29,6 +29,7 @@ import com.hfad2.projectmanagmentapplication.models.Notification;
 import com.hfad2.projectmanagmentapplication.models.NotificationType;
 import com.hfad2.projectmanagmentapplication.repositories.NotificationRepository;
 import com.hfad2.projectmanagmentapplication.repositories.OperationCallback;
+import com.hfad2.projectmanagmentapplication.repositories.VolleyNotificationRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +97,7 @@ public class NotificationActivity extends BaseProjectActivity {
      * Sets up toolbar, search view, filter spinner and their respective listeners.
      */
     private void initialize() {
-        repository = new MockNotificationRepository();
+        repository = new VolleyNotificationRepository(this);
 
         recyclerView = findViewById(R.id.recycler_notifications);
 
@@ -161,12 +162,15 @@ public class NotificationActivity extends BaseProjectActivity {
         adapter.setOnMoreClickListener((item, view) -> showPopupMenu(view, item));
     }
 
+
     /**
-     * Loads user notifications from repository and converts them to card format.
-     * Updates RecyclerView with loaded notifications.
+     * Loads notifications from the repository and updates the UI.
+     * This method retrieves notifications, creates card data for each notification,
+     * and updates the RecyclerView adapter with the new data.
+     * If an error occurs during loading, an error message is displayed.
      */
     private void loadNotifications() {
-        repository.getNotifications(getCurrentUserId(), new OperationCallback<List<Notification>>() {
+        repository.toggleArchivedVisibility(showArchived, new OperationCallback<List<Notification>>() {
             @Override
             public void onSuccess(List<Notification> notifications) {
                 notificationCards.clear();
@@ -206,7 +210,11 @@ public class NotificationActivity extends BaseProjectActivity {
         popup.setOnMenuItemClickListener(menuItem -> {
             int itemId = menuItem.getItemId();
             if (itemId == R.id.action_delete) {
-                deleteNotification(notification.getId());
+                if (notification.getType() == NotificationType.COMMENT) {
+                    deleteNotification(notification.getId());
+                } else {
+                    archiveNotification(notification.getId());
+                }
                 return true;
             } else if (itemId == R.id.action_view_profile) {
                 openSenderProfile(notification.getSenderId());
@@ -219,7 +227,6 @@ public class NotificationActivity extends BaseProjectActivity {
             return false;
         });
 
-        // Only show "View Task" for comment notifications
         popup.getMenu().findItem(R.id.action_view_task).setVisible(
                 notification.getType() == NotificationType.COMMENT
         );
@@ -227,6 +234,29 @@ public class NotificationActivity extends BaseProjectActivity {
         popup.show();
     }
 
+/**
+ * Archives a notification by updating its status in the repository.
+ * On success, reloads the notification list and shows a success message.
+ * On error, shows an error message.
+ *
+ * @param notificationId The ID of the notification to archive
+ */
+private void archiveNotification(String notificationId) {
+    repository.archiveNotification(notificationId, new OperationCallback<Boolean>() {
+        @Override
+        public void onSuccess(Boolean result) {
+            loadNotifications();
+            Toast.makeText(NotificationActivity.this,
+                    "Notification archived", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onError(String error) {
+            Toast.makeText(NotificationActivity.this,
+                    "Error archiving notification: " + error, Toast.LENGTH_SHORT).show();
+        }
+    });
+}
     /**
      * Opens user profile activity for notification sender.
      *
@@ -350,14 +380,13 @@ public class NotificationActivity extends BaseProjectActivity {
      * @param type NotificationType to filter by
      */
     private void filterByType(NotificationType type) {
-        repository.getNotifications(getCurrentUserId(), new OperationCallback<List<Notification>>() {
+        repository.toggleArchivedVisibility(showArchived, new OperationCallback<List<Notification>>() {
             @Override
             public void onSuccess(List<Notification> notifications) {
                 notificationCards.clear();
 
                 for (Notification notification : notifications) {
-                    if (notification.getType() == type &&
-                            (!notification.isArchived() || showArchived)) {
+                    if (notification.getType() == type) {
                         CardData card = createNotificationCard(notification);
                         notificationCards.add(card);
                     }

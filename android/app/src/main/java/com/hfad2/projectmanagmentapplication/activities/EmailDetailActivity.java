@@ -11,7 +11,9 @@ import android.widget.Toast;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.hfad2.projectmanagmentapplication.R;
 import com.hfad2.projectmanagmentapplication.models.Notification;
+import com.hfad2.projectmanagmentapplication.repositories.MessageRepository;
 import com.hfad2.projectmanagmentapplication.repositories.OperationCallback;
+import com.hfad2.projectmanagmentapplication.repositories.VolleyMessageRepository;
 
 /**
  * Activity for displaying full email content from notifications.
@@ -22,7 +24,8 @@ public class EmailDetailActivity extends BaseProjectActivity {
     private Notification emailNotification;
     private MaterialToolbar toolbar;
     private TextView txtSender, txtSubject, txtContent, txtTimestamp;
-    private ImageButton btnArchive, btnReply;
+    private ImageButton btnReply;
+    private MessageRepository repository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,7 @@ public class EmailDetailActivity extends BaseProjectActivity {
     }
 
     private void initializeViews() {
+        repository = new VolleyMessageRepository(this);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -49,10 +53,8 @@ public class EmailDetailActivity extends BaseProjectActivity {
         txtContent = findViewById(R.id.text_content);
         txtTimestamp = findViewById(R.id.text_timestamp);
 
-        btnArchive = toolbar.findViewById(R.id.btn_archive);
         btnReply = toolbar.findViewById(R.id.btn_reply);
 
-        btnArchive.setOnClickListener(v -> archiveEmail());
         btnReply.setOnClickListener(v -> openReplyActivity());
     }
 
@@ -78,30 +80,8 @@ public class EmailDetailActivity extends BaseProjectActivity {
         txtSubject.setText(emailNotification.getTitle());
         txtTimestamp.setText(formatTimestamp(emailNotification.getTimestamp()));
         txtContent.setText(emailNotification.getContent());
-
-        btnArchive.setImageResource(emailNotification.isArchived() ?
-                R.drawable.ic_unarchive : R.drawable.ic_archive);
     }
 
-    private void archiveEmail() {
-        repository.archiveNotification(notificationId, new OperationCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean result) {
-                emailNotification.setArchived(!emailNotification.isArchived());
-                updateUI();
-                String message = emailNotification.isArchived() ?
-                        "Email archived" : "Email unarchived";
-                Toast.makeText(EmailDetailActivity.this,
-                        message, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onError(String error) {
-                Toast.makeText(EmailDetailActivity.this,
-                        "Error updating email: " + error, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     private void openReplyActivity() {
         Intent intent = new Intent(this, MessageSendingActivity.class);

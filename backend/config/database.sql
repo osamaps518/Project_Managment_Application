@@ -53,3 +53,16 @@ CREATE TABLE task_comments (
     FOREIGN KEY (task_id) REFERENCES tasks(task_id),
     FOREIGN KEY (author_id) REFERENCES users(user_id)
 );
+
+CREATE TABLE notifications (
+    notification_id VARCHAR(36) PRIMARY KEY,
+    type VARCHAR(20),  -- COMMENT or EMAIL
+    sender_id VARCHAR(36),
+    title VARCHAR(100),
+    content TEXT,
+    task_id VARCHAR(36),
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    is_archived BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (sender_id) REFERENCES users(user_id),
+    FOREIGN KEY (task_id) REFERENCES tasks(task_id)
+);

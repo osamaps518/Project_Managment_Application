@@ -67,4 +67,8 @@ public class Notification {
     public String getTaskId() {
         return taskId;
     }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 }

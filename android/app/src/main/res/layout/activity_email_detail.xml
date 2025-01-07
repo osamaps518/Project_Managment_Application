@@ -30,12 +30,6 @@
                     android:layout_weight="1" />
 
             <ImageButton
-                    android:id="@+id/btn_archive"
-                    style="@style/Widget.App.Toolbar.Icon"
-                    android:src="@drawable/ic_archive"
-                    app:tint="@color/font_color" />
-
-            <ImageButton
                     android:id="@+id/btn_reply"
                     style="@style/Widget.App.Toolbar.Icon"
                     android:src="@drawable/ic_reply"

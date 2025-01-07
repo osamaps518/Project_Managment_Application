@@ -27,6 +27,13 @@ public class APIConfig {
     public static final String PARAM_AUTHOR_ID = "author_id";
     public static final String PARAM_CONTENT = "content";
 
+    // Request parameters for notifications
+    public static final String PARAM_NOTIFICATION_ID = "notification_id";
+    public static final String PARAM_START_DATE = "start_date";
+    public static final String PARAM_END_DATE = "end_date";
+    public static final String PARAM_SHOW_ARCHIVED = "show_archived";
+    public static final String PARAM_TYPE = "type";
+
     /** API endpoint paths */
     // Team member endpoints
     public static final String GET_MEMBERS = BASE_URL + "get_members.php";
@@ -49,6 +56,14 @@ public class APIConfig {
     public static final String GET_TASK_COMMENTS = BASE_URL + "get_task_comments.php";
     public static final String ADD_TASK_COMMENT = BASE_URL + "add_task_comment.php";
 
+    // Notification endpoints
+    public static final String GET_NOTIFICATIONS = BASE_URL + "get_notifications.php";
+    public static final String SEARCH_NOTIFICATIONS = BASE_URL + "search_notifications.php";
+    public static final String REMOVE_NOTIFICATION = BASE_URL + "remove_notification.php";
+    public static final String ARCHIVE_NOTIFICATION = BASE_URL + "archive_notification.php";
+    public static final String GET_EMAIL_CONTENT = BASE_URL + "get_email_content.php";
+    public static final String FILTER_NOTIFICATIONS = BASE_URL + "filter_notifications.php";
+    public static final String SEND_MESSAGE = BASE_URL + "send_message.php";
 
 
     /** Standard error messages */

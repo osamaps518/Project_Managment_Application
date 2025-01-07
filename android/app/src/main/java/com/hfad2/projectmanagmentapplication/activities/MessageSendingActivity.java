@@ -14,6 +14,7 @@ import com.hfad2.projectmanagmentapplication.R;
 import com.hfad2.projectmanagmentapplication.mock.MockMessageRepository;
 import com.hfad2.projectmanagmentapplication.repositories.MessageRepository;
 import com.hfad2.projectmanagmentapplication.repositories.OperationCallback;
+import com.hfad2.projectmanagmentapplication.repositories.VolleyMessageRepository;
 
 /**
  * Activity for composing and sending messages to project team members.
@@ -61,7 +62,7 @@ public class MessageSendingActivity extends BaseProjectActivity {
      * Creates MessageRepository instance and binds UI elements.
      */
     private void initialize() {
-        repository = new MockMessageRepository();
+        repository = new VolleyMessageRepository(this);
 
         // Initialize views
         toolbar = findViewById(R.id.message_toolbar);
