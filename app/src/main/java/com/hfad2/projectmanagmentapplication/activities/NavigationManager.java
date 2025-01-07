@@ -33,11 +33,11 @@ public class NavigationManager {
             if (itemId == R.id.nav_team_members) {
                 intent = new Intent(context, TeamMembersActivity.class);
             } else if (itemId == R.id.nav_progress) {
-                intent = new Intent(context, TrackProgressActivity.class);
+                intent = new Intent(context, ProgressTrackingActivity.class);
             } else if (itemId == R.id.nav_notifications) {
                 intent = new Intent(context, NotificationActivity.class);
             } else if (itemId == R.id.nav_messages) {
-                intent = new Intent(context, SendMessagesActivity.class);
+                intent = new Intent(context, MessageSendingActivity.class);
             }
 
             if (intent != null) {

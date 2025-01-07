@@ -8,8 +8,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.appbar.MaterialToolbar;
 import com.hfad2.projectmanagmentapplication.R;
 import com.hfad2.projectmanagmentapplication.models.Notification;
@@ -106,7 +104,7 @@ public class EmailDetailActivity extends BaseProjectActivity {
     }
 
     private void openReplyActivity() {
-        Intent intent = new Intent(this, SendMessagesActivity.class);
+        Intent intent = new Intent(this, MessageSendingActivity.class);
         intent.putExtra("reply_to", emailNotification.getSenderId());
         intent.putExtra("subject", "Re: " + emailNotification.getTitle());
         startActivity(intent);

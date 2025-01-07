@@ -25,7 +25,7 @@
                 android:name=".activities.TaskDetailActivity"
                 android:exported="false" />
         <activity
-                android:name=".activities.SendMessagesActivity"
+                android:name=".activities.MessageSendingActivity"
                 android:exported="false" />
         <activity
                 android:name=".activities.TeamMembersActivity"
@@ -34,7 +34,7 @@
                 android:name=".activities.NotificationsActivity"
                 android:exported="false" />
         <activity
-                android:name=".activities.TrackProgressActivity"
+                android:name=".activities.ProgressTrackingActivity"
                 android:exported="false" />
         <activity
                 android:name=".MainActivity"

@@ -53,7 +53,7 @@ import java.util.List;
  * <p>
  * Layout file: activity_track_progress.xml
  */
-public class TrackProgressActivity extends BaseProjectActivity {
+public class ProgressTrackingActivity extends BaseProjectActivity {
     private RecyclerView recyclerView;
     private FloatingActionButton fabAdd;
     private MaterialToolbar toolbar;
@@ -171,7 +171,7 @@ public class TrackProgressActivity extends BaseProjectActivity {
 
             @Override
             public void onError(String error) {
-                Toast.makeText(TrackProgressActivity.this,
+                Toast.makeText(ProgressTrackingActivity.this,
                         "Error loading tasks: " + error,
                         Toast.LENGTH_SHORT).show();
             }
@@ -244,13 +244,13 @@ public class TrackProgressActivity extends BaseProjectActivity {
             @Override
             public void onSuccess(Boolean result) {
                 loadTasks();
-                Toast.makeText(TrackProgressActivity.this,
+                Toast.makeText(ProgressTrackingActivity.this,
                         "Task removed successfully", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(String error) {
-                Toast.makeText(TrackProgressActivity.this,
+                Toast.makeText(ProgressTrackingActivity.this,
                         "Error removing task: " + error, Toast.LENGTH_SHORT).show();
             }
         });
@@ -362,7 +362,7 @@ public class TrackProgressActivity extends BaseProjectActivity {
 
             @Override
             public void onError(String error) {
-                Toast.makeText(TrackProgressActivity.this,
+                Toast.makeText(ProgressTrackingActivity.this,
                         "Search failed: " + error, Toast.LENGTH_SHORT).show();
             }
         });
@@ -422,7 +422,7 @@ public class TrackProgressActivity extends BaseProjectActivity {
 
             @Override
             public void onError(String error) {
-                Toast.makeText(TrackProgressActivity.this,
+                Toast.makeText(ProgressTrackingActivity.this,
                         "Filter failed: " + error, Toast.LENGTH_SHORT).show();
             }
         });
