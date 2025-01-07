@@ -10,13 +10,13 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.hfad2.projectmanagmentapplication.R;
 
-public class NotificationsActivity extends AppCompatActivity {
+public class BaseProjectActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_notifications);
+        setContentView(R.layout.activity_base_project);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);

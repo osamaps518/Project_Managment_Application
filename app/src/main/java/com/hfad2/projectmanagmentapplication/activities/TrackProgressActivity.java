@@ -16,7 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -54,7 +53,7 @@ import java.util.List;
  * <p>
  * Layout file: activity_track_progress.xml
  */
-public class TrackProgressActivity extends AppCompatActivity {
+public class TrackProgressActivity extends BaseProjectActivity {
     private RecyclerView recyclerView;
     private FloatingActionButton fabAdd;
     private MaterialToolbar toolbar;

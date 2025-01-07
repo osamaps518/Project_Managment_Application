@@ -2,11 +2,9 @@ package com.hfad2.projectmanagmentapplication.activities;
 
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.hfad2.projectmanagmentapplication.R;
 
-public class TaskDetailActivity extends AppCompatActivity {
+public class TaskDetailActivity extends BaseProjectActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

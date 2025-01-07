@@ -15,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,7 +38,7 @@ import java.util.List;
  * Displays a list of team members using a card-based interface with search and filter capabilities.
  * Supports operations like viewing member details, removing members, and managing member tasks.
  */
-public class TeamMembersActivity extends AppCompatActivity {
+public class TeamMembersActivity extends BaseProjectActivity {
     private RecyclerView recyclerView;
     private FloatingActionButton fabAdd;
     private MaterialToolbar toolbar;

@@ -14,4 +14,11 @@ public interface NotificationRepository {
     void filterByTimeRange(String userId, Date startDate, Date endDate, OperationCallback<List<Notification>> callback);
 
     void removeNotification(String notificationId, OperationCallback<Boolean> callback);
+
+    void archiveNotification(String notificationId, OperationCallback<Boolean> callback);
+
+    void toggleArchivedVisibility(boolean showArchived,
+                                  OperationCallback<List<Notification>> callback);
+
+    void getEmailContent(String notificationId, OperationCallback<Notification> callback);
 }

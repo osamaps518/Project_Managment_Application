@@ -20,7 +20,7 @@
 
     <!-- FAB for adding new members -->
     <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_members"
+            android:id="@+id/recycler_notifications"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:padding="8dp"
