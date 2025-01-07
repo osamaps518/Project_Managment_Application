@@ -1,3 +1,7 @@
+// Retrieves all team members associated with a specific project
+// Method: GET
+// Parameters: project_id
+// Returns: JSON array of team members with their user detail
 <?php
 require_once 'Database.php';
 

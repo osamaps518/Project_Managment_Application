@@ -1,3 +1,8 @@
+// Adds a new member to a project's team
+// Method: POST
+// Parameters: project_id, employee_id
+// Returns: JSON response with success/error status and message
+
 <?php
 require_once 'Database.php';
 

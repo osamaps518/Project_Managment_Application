@@ -1,3 +1,8 @@
+// Finds an employee by their user ID
+// Method: GET
+// Parameters: user_id
+// Returns: JSON object with employee details or error message if not found
+
 <?php
 require_once 'Database.php';
 

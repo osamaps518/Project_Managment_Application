@@ -1,3 +1,8 @@
+// Filters team members by their role in a project
+// Method: GET
+// Parameters: project_id, role
+// Returns: JSON array of team members with specified role
+
 <?php
 if(isset($_GET['project_id']) && isset($_GET['role'])) {
     $project_id = $_GET['project_id'];

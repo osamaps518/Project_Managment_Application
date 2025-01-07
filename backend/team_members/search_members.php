@@ -1,3 +1,7 @@
+// Searches for team members by name or username within a project
+// Method: GET
+// Parameters: project_id, query (search string)
+// Returns: JSON array of matching team members
 <?php
 require_once 'Database.php';
 
