@@ -15,13 +15,23 @@ public class Employee {
     private Map<String, Project> assignedProjects;
     private List<Task> assignedTasks;
     private EmployeeStatus status;
+    private String role;
     // Track progress per project
 
-    public Employee(User user) {
+    public Employee(User user, String role) {
         this.user = user;
-        this.assignedProjects = new HashMap<String, Project>();
+        this.role = role;
+        this.assignedProjects = new HashMap<>();
         this.assignedTasks = new ArrayList<>();
         this.status = EmployeeStatus.AVAILABLE;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getRole() {
+        return role;
     }
 
     public User getUserDetails() {
@@ -42,6 +52,14 @@ public class Employee {
                 .stream()
                 .sorted(Comparator.comparing(Project::getStartDate))
                 .collect(Collectors.toList());
+    }
+
+    public String getAssignedTaskByProject(String projectId) {
+        return assignedTasks.stream()
+                .filter(task -> task.getProject().getProjectId().equals(projectId))
+                .map(Task::getTitle)
+                .findFirst()
+                .orElse("No task assigned");
     }
 
     // Delegate methods to access User information
@@ -98,5 +116,9 @@ public class Employee {
     // assigning tasks to themselves
     private void addAssignedTask(Task task) {
         assignedTasks.add(task);
+    }
+
+    public String getProfileImage() {
+        return user.getProfileImage();
     }
 }

@@ -22,6 +22,16 @@ public class User {
         this.isActive = true;
         this.lastLogin = new Date();
     }
+    // Add this constructor
+    public User(String userId, String email, String fullName, String username, String profileImage) {
+        this.userId = userId;  // Use provided ID instead of generating
+        this.email = email;
+        this.fullName = fullName;
+        this.profileImage = profileImage;
+        this.username = username;
+        this.isActive = true;
+        this.lastLogin = new Date();
+    }
 
     public String getUsername() {
         return username;
@@ -88,6 +98,13 @@ public class User {
     // Profile update
     public void updateProfile(String fullName, String profileImage) {
         this.fullName = fullName;
+        this.profileImage = profileImage;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+    public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;
     }
 }

@@ -1,19 +1,21 @@
+<?php
 // Adds a new member to a project's team
 // Method: POST
 // Parameters: project_id, employee_id
 // Returns: JSON response with success/error status and message
 
-<?php
-require_once 'Database.php';
+
+require_once '../config/database.php';
 
 if($_SERVER['REQUEST_METHOD'] == "POST") {
     $database = new Database();
     $conn = $database->connect();
     
     $project_id = $conn->real_escape_string($_POST['project_id']);
-    $employee_id = $conn->real_escape_string($_POST['employee_id']);
+    $user_id = $conn->real_escape_string($_POST['user_id']);
     
-    $sql = "INSERT INTO project_members (project_id, employee_id) VALUES ('$project_id', '$employee_id')";
+    $sql = "INSERT INTO project_members (project_id, user_id, role) 
+        VALUES ('$project_id', '$user_id', 'Developer')";
     
     $response = array();
     if ($conn->query($sql) === TRUE) {

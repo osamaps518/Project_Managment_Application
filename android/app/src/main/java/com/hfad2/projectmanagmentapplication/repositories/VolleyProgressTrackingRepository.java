@@ -245,8 +245,9 @@ public class VolleyProgressTrackingRepository implements ProgressTrackingReposit
                 obj.getString("assigned_email"),
                 obj.getString("assigned_name")
         );
-        Employee assignedEmployee = new Employee(assignedUser);
-
+        // TODO: adjust the endpoint to return the role
+//        Employee assignedEmployee = new Employee(assignedUser);
+        Employee assignedEmployee = new Employee(assignedUser, "Unknown");
         // Create a temporary Project
         Project project = null; // Project details should be set by the Activity
 

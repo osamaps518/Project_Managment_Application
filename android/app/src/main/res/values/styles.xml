@@ -1,4 +1,15 @@
 <resources>
+    <!-- Base styles -->
+    <style name="Widget.App" parent="Widget.MaterialComponents.FloatingActionButton" />
+
+    <style name="Widget.App.Card" parent="Widget.MaterialComponents.CardView" />
+
+    <style name="Widget.App.ImageButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+    </style>
+
+    <style name="Widget.App.TextView" parent="Widget.MaterialComponents.TextView" />
+
 
     <!-- Custom FAB Style -->
     <style name="Widget.App.FloatingActionButton" parent="Widget.MaterialComponents.FloatingActionButton">

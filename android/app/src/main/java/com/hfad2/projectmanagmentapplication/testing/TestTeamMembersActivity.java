@@ -1,5 +1,6 @@
-package com.hfad2.projectmanagmentapplication.activities;
+package com.hfad2.projectmanagmentapplication.testing;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -9,14 +10,15 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.hfad2.projectmanagmentapplication.R;
+import com.hfad2.projectmanagmentapplication.activities.TeamMembersActivity;
 
-public class BaseProjectActivity extends AppCompatActivity {
+public class TestTeamMembersActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        // Remove this line since we're using different layouts for each activity
-        // setContentView(R.layout.activity_base_project);
-        // Also remove the WindowInsets setup since it's causing the crash
+        Intent intent = new Intent(this, TeamMembersActivity.class);
+        intent.putExtra("project_id", "proj001");
+        startActivity(intent);
+        finish();
     }
 }

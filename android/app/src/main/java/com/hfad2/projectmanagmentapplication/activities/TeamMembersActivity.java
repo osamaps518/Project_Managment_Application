@@ -2,6 +2,7 @@ package com.hfad2.projectmanagmentapplication.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -9,20 +10,20 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.SearchView;
+import androidx.appcompat.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hfad2.projectmanagmentapplication.R;
-import com.hfad2.projectmanagmentapplication.mock.MockTeamMembersRepository;
 import com.hfad2.projectmanagmentapplication.models.CardData;
 import com.hfad2.projectmanagmentapplication.models.Employee;
 import com.hfad2.projectmanagmentapplication.models.Task;
@@ -104,12 +105,12 @@ public class TeamMembersActivity extends BaseProjectActivity {
         toolbarTitle.setText(R.string.nav_team_members);
 
         // Setup search functionality
-        searchView = new SearchView(this);
+        searchView = findViewById(R.id.search_view);
         searchView.setQueryHint("Search by name...");
         searchView.setVisibility(View.GONE);  // Hidden by default
 
         // Setup role filter spinner
-        roleFilterSpinner = new Spinner(this);
+        roleFilterSpinner = toolbar.findViewById(R.id.role_filter_spinner);
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.role_filters, android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -156,11 +157,15 @@ public class TeamMembersActivity extends BaseProjectActivity {
             public void onSuccess(List<Employee> employees) {
                 memberCards.clear();
                 for (Employee employee : employees) {
-                    CardData card = new CardData();
-                    // TODO: This needs to be adjusted, the first represents username, second line represents role, and the third line represents the task assigned to the user
-                    card.setLine1(employee.getFullName());
-                    card.setLine2(employee.getUserName());
                     // TODO: Add profile image URL
+                    CardData card = new CardData();
+                    card.setLine1(employee.getUserName());
+                    card.setLine2(employee.getRole());
+                    card.setLine3("Task: " + employee.getAssignedTaskByProject(projectId));
+                    card.setImage(ContextCompat.getDrawable(TeamMembersActivity.this, getProfileImageResource(employee.getProfileImage())));
+
+                    card.setData(employee);
+
                     memberCards.add(card);
                 }
                 adapter.notifyDataSetChanged();
@@ -175,6 +180,25 @@ public class TeamMembersActivity extends BaseProjectActivity {
         });
     }
 
+    // TODO: Adjust profile image handling when backend supports image URLs
+    // TODO: Use Glide for image loading
+    /**
+     * Returns the resource ID for the profile image based on the image name.
+     * Currently uses a switch statement to map image names to drawable resources.
+     * Default icon is used if the image name is not recognized.
+     *
+     * @param imageName Name of the profile image file
+     * @return Resource ID of the profile image
+     */
+    private int getProfileImageResource(String imageName) {
+        switch (imageName) {
+            case "profile1.jpg": return R.drawable.ic_person;
+            case "profile2.jpg": return R.drawable.ic_group;
+            case "profile3.jpg": return R.drawable.ic_person;
+            case "profile4.jpg": return R.drawable.ic_person;
+            default: return R.drawable.ic_person; // Default icon
+        }
+    }
     /**
      * Displays a popup menu for member-specific actions.
      * Menu includes options to remove member, view assigned task, and mark as inactive.
@@ -231,9 +255,11 @@ public class TeamMembersActivity extends BaseProjectActivity {
      * @param employeeId ID of the employee to remove
      */
     private void removeMember(String employeeId) {
+        Log.d("TeamMembers", "Attempting to remove member: " + employeeId + " from project: " + projectId);
         repository.removeMember(projectId, employeeId, new OperationCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
+                Log.d("TeamMembers", "Remove member result: " + result);
                 loadTeamMembers(); // Refresh list
                 Toast.makeText(TeamMembersActivity.this,
                         "Member removed successfully", Toast.LENGTH_SHORT).show();
@@ -241,6 +267,8 @@ public class TeamMembersActivity extends BaseProjectActivity {
 
             @Override
             public void onError(String error) {
+                Log.e("TeamMembers", "Error removing member: " + error);
+
                 Toast.makeText(TeamMembersActivity.this,
                         "Error removing member: " + error, Toast.LENGTH_SHORT).show();
             }
@@ -271,6 +299,9 @@ public class TeamMembersActivity extends BaseProjectActivity {
             if (!isSearchActive) {
                 // Hide title, show search view
                 toolbarTitle.setVisibility(View.GONE);
+                btnSearch.setVisibility(View.GONE);
+                btnFilter.setVisibility(View.GONE);
+                btnMenu.setVisibility(View.GONE);
                 searchView.setVisibility(View.VISIBLE);
                 searchView.setIconified(false);  // Automatically show keyboard
                 isSearchActive = true;
@@ -296,6 +327,9 @@ public class TeamMembersActivity extends BaseProjectActivity {
             // Restore original toolbar state
             searchView.setVisibility(View.GONE);
             toolbarTitle.setVisibility(View.VISIBLE);
+            btnMenu.setVisibility(View.VISIBLE);
+            btnSearch.setVisibility(View.VISIBLE);
+            btnFilter.setVisibility(View.VISIBLE);
             isSearchActive = false;
             loadTeamMembers();  // Reset to show all members
             return true;
@@ -348,8 +382,10 @@ public class TeamMembersActivity extends BaseProjectActivity {
             // Show/hide role filter spinner
             if (roleFilterSpinner.getVisibility() == View.VISIBLE) {
                 roleFilterSpinner.setVisibility(View.GONE);
+                btnSearch.setVisibility(View.VISIBLE);
             } else {
                 roleFilterSpinner.setVisibility(View.VISIBLE);
+                btnSearch.setVisibility(View.GONE);
             }
         });
 

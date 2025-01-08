@@ -6,7 +6,8 @@ package com.hfad2.projectmanagmentapplication.config;
  */
 public class APIConfig {
     /** Base URL for API endpoints, configured for Android emulator localhost */
-    public static final String BASE_URL = "http://10.0.2.2/project_api/";  // Android emulator localhost
+//    public static final String BASE_URL = "http://10.0.2.2/project_api/";  // Android emulator localhost
+    public static final String BASE_URL = "http://10.0.2.2/project_management/";
 
     // Request parameters for team members
     public static final String PARAM_PROJECT_ID = "project_id";
@@ -36,13 +37,13 @@ public class APIConfig {
 
     /** API endpoint paths */
     // Team member endpoints
-    public static final String GET_MEMBERS = BASE_URL + "get_members.php";
-    public static final String ADD_MEMBER = BASE_URL + "add_member.php";
-    public static final String REMOVE_MEMBER = BASE_URL + "remove_member.php";
-    public static final String SEARCH_MEMBERS = BASE_URL + "search_members.php";
-    public static final String FILTER_MEMBERS = BASE_URL + "filter_members.php";
-    public static final String FIND_EMPLOYEE = BASE_URL + "find_employee.php";
-    public static final String GET_ASSIGNED_TASK = BASE_URL + "get_assigned_task.php";
+    public static final String GET_MEMBERS = BASE_URL + "team_members/get_members.php";
+    public static final String ADD_MEMBER = BASE_URL + "team_members/add_member.php";
+    public static final String REMOVE_MEMBER = BASE_URL + "team_members/remove_member.php";
+    public static final String SEARCH_MEMBERS = BASE_URL + "team_members/search_members.php";
+    public static final String FILTER_MEMBERS = BASE_URL + "team_members/filter_members.php";
+    public static final String FIND_EMPLOYEE = BASE_URL + "team_members/find_employee.php";
+    public static final String GET_ASSIGNED_TASK = BASE_URL + "team_members/get_assigned_task.php";
 
     // Task management endpoints
     public static final String GET_ALL_TASKS = BASE_URL + "get_tasks.php";

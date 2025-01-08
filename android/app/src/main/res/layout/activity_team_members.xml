@@ -8,6 +8,7 @@
         android:background="@color/theme"
         tools:context=".activities.TeamMembersActivity">
 
+
     <!-- Include the base toolbar -->
     <include
             android:id="@+id/toolbar"
@@ -38,5 +39,6 @@
             app:srcCompat="@drawable/ic_person_add"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

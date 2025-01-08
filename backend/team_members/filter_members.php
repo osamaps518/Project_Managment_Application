@@ -1,26 +1,38 @@
-// Filters team members by their role in a project
-// Method: GET
-// Parameters: project_id, role
-// Returns: JSON array of team members with specified role
-
 <?php
+/**
+ *  Filters team members by their role in a project
+ *  Method: GET
+ *  Parameters: project_id, role
+ *  Returns: JSON array of team members with specified role
+ */
+
+require_once '../config/database.php';
+
 if(isset($_GET['project_id']) && isset($_GET['role'])) {
-    $project_id = $_GET['project_id'];
-    $role = $_GET['role'];
+    $database = new Database();
+    $conn = $database->connect();
     
-    $conn = new mysqli($server_name, $username, $password, $dbname);
-    
-    $sql = "SELECT e.*, u.* FROM employees e 
-            JOIN users u ON e.user_id = u.user_id 
-            WHERE e.project_id = '" . $project_id . "' 
-            AND e.role = '" . $role . "'";
-    
+    $project_id = $conn->real_escape_string($_GET['project_id']);
+    $role = $conn->real_escape_string($_GET['role']);
+
+    $sql = "SELECT u.user_id, u.username, u.email, u.full_name, u.profile_image, u.last_login, u.is_active, pm.role 
+        FROM users u 
+        JOIN project_members pm ON u.user_id = pm.user_id 
+        WHERE pm.project_id = '$project_id' 
+        AND pm.role = '$role'";
+
     $result = $conn->query($sql);
-    $resultarray = array();
-    while($row = mysqli_fetch_assoc($result)) {
-        $resultarray[] = $row;
+    $members = array();
+    
+    if($result) {
+        while($row = $result->fetch_assoc()) {
+            $members[] = $row;
+        }
+        echo json_encode($members);
+    } else {
+        echo json_encode(['error' => true, 'message' => $conn->error]);
     }
-    echo json_encode($resultarray);
-    $conn->close();
+    
+    $database->closeConnection();
 }
 ?>

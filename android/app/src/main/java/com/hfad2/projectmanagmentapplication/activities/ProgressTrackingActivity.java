@@ -24,7 +24,6 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hfad2.projectmanagmentapplication.R;
-import com.hfad2.projectmanagmentapplication.mock.MockProgressTrackingRepository;
 import com.hfad2.projectmanagmentapplication.models.CardData;
 import com.hfad2.projectmanagmentapplication.models.Task;
 import com.hfad2.projectmanagmentapplication.models.TaskComment;

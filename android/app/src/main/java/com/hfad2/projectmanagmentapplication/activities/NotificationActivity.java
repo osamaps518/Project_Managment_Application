@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.hfad2.projectmanagmentapplication.R;
-import com.hfad2.projectmanagmentapplication.mock.MockNotificationRepository;
 import com.hfad2.projectmanagmentapplication.models.CardData;
 import com.hfad2.projectmanagmentapplication.models.Notification;
 import com.hfad2.projectmanagmentapplication.models.NotificationType;

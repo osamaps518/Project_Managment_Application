@@ -2,6 +2,7 @@ package com.hfad2.projectmanagmentapplication.repositories;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -96,6 +97,8 @@ public class VolleyTeamMembersRepository implements TeamMembersRepository {
      */
     @Override
     public void removeMember(String projectId, String employeeId, OperationCallback<Boolean> callback) {
+        Log.d("TeamMembersRepo", "Remove member params - projectId: " + projectId + ", employeeId: " + employeeId);
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST, APIConfig.REMOVE_MEMBER,
                 response -> parseBasicResponse(response, callback),
                 error -> handleVolleyError(error, callback)) {
@@ -272,11 +275,15 @@ public class VolleyTeamMembersRepository implements TeamMembersRepository {
      */
     private Employee parseEmployeeFromJson(JSONObject obj) throws JSONException {
         User user = new User(
+                obj.getString("user_id"),
                 obj.getString("email"),
-                obj.getString("full_name")
+                obj.getString("full_name"),
+                obj.getString("username"),
+                obj.getString("profile_image")
         );
-        user.username = obj.getString("username");
-        return new Employee(user);
+
+        String role = obj.getString("role");
+        return new Employee(user, role);
     }
 
     /**
