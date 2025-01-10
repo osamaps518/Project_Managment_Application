@@ -11,12 +11,19 @@ import com.android.volley.toolbox.Volley;
 import com.hfad2.projectmanagmentapplication.config.APIConfig;
 import com.hfad2.projectmanagmentapplication.models.Notification;
 import com.hfad2.projectmanagmentapplication.models.NotificationType;
+import com.hfad2.projectmanagmentapplication.models.Project;
+import com.hfad2.projectmanagmentapplication.models.User;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -113,7 +120,7 @@ public class VolleyMessageRepository implements MessageRepository {
      * @param callback  The callback to handle the response or error.
      */
     @Override
-    public void sendMessage(String senderId, String projectId, String subject, String content,
+    public void sendMessage(String senderId, String recipientId,String projectId, String subject, String content,
                             OperationCallback<Boolean> callback) {
         StringRequest request = new StringRequest(Request.Method.POST, APIConfig.SEND_MESSAGE,
                 response -> parseBasicResponse(response, callback),
@@ -123,6 +130,7 @@ public class VolleyMessageRepository implements MessageRepository {
                 Map<String, String> params = new HashMap<>();
                 params.put("sender_id", senderId);
                 params.put("project_id", projectId);
+                params.put("receiver_id", recipientId);
                 params.put("title", subject);
                 params.put("content", content);
                 params.put("type", "EMAIL");
@@ -143,6 +151,97 @@ public class VolleyMessageRepository implements MessageRepository {
         try {
             JSONObject jsonResponse = new JSONObject(response);
             callback.onSuccess(!jsonResponse.getBoolean("error"));
+        } catch (JSONException e) {
+            callback.onError(APIConfig.ERROR_PARSE + ": " + e.getMessage());
+        }
+    }
+
+
+
+    /**
+     * Gets all projects that the specified user is a member of.
+     * This includes both projects they manage and projects they participate in.
+     *
+     * @param userId   The ID of the user whose projects we want to retrieve
+     * @param callback The callback to handle the list of projects or error
+     */
+    @Override
+    public void getUserProjects(String userId, OperationCallback<List<Project>> callback) {
+        String url = APIConfig.GET_USER_PROJECTS + "?" + APIConfig.PARAM_USER_ID + "=" + userId;
+
+        StringRequest request = new StringRequest(Request.Method.GET, url,
+                response -> parseProjectList(response, callback),
+                error -> handleVolleyError(error, callback));
+
+        queue.add(request);
+    }
+
+    /**
+     * Gets all members of a specific project, excluding the current user.
+     * This helps populate the recipient list for sending messages.
+     *
+     * @param projectId The ID of the project whose members we want to retrieve
+     * @param callback  The callback to handle the list of users or error
+     */
+    @Override
+    public void getProjectMembers(String projectId, OperationCallback<List<User>> callback) {
+        String url = APIConfig.GET_PROJECT_MEMBERS + "?" + APIConfig.PARAM_PROJECT_ID + "=" + projectId;
+
+        StringRequest request = new StringRequest(Request.Method.GET, url,
+                response -> parseUserList(response, callback),
+                error -> handleVolleyError(error, callback));
+
+        queue.add(request);
+    }
+
+    /**
+     * Parses the JSON response containing a list of projects.
+     * Converts each JSON object into a Project model instance.
+     */
+    private void parseProjectList(String response, OperationCallback<List<Project>> callback) {
+        try {
+            JSONArray jsonArray = new JSONArray(response);
+            List<Project> projects = new ArrayList<>();
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject obj = jsonArray.getJSONObject(i);
+                Project project = new Project(
+                        obj.getString("project_id"),
+                        obj.getString("title"),
+                        obj.getString("description"),
+                        null,
+                        new SimpleDateFormat("yyyy-MM-dd").parse(obj.getString("start_date")),
+                        new SimpleDateFormat("yyyy-MM-dd").parse(obj.getString("due_date"))
+                );
+                projects.add(project);
+            }
+
+            callback.onSuccess(projects);
+        } catch (JSONException | ParseException e) {
+            callback.onError(APIConfig.ERROR_PARSE + ": " + e.getMessage());
+        }
+    }
+
+    /**
+     * Parses the JSON response containing a list of users.
+     * Converts each JSON object into a User model instance.
+     */
+    private void parseUserList(String response, OperationCallback<List<User>> callback) {
+        try {
+            JSONArray jsonArray = new JSONArray(response);
+            List<User> users = new ArrayList<>();
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject obj = jsonArray.getJSONObject(i);
+                User user = new User(
+                        obj.getString("email"),
+                        obj.getString("full_name")
+                );
+                user.setUserId(obj.getString("user_id"));
+                users.add(user);
+            }
+
+            callback.onSuccess(users);
         } catch (JSONException e) {
             callback.onError(APIConfig.ERROR_PARSE + ": " + e.getMessage());
         }

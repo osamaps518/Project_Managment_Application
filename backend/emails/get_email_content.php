@@ -1,5 +1,5 @@
 <?php
-require_once 'database.php';
+require_once '../config/database.php';
 
 if(isset($_GET['notification_id'])) {
     $notification_id = $_GET['notification_id'];

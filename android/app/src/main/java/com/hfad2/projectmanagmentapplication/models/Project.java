@@ -34,6 +34,20 @@ public class Project {
         this.tasks = new ArrayList<>();
     }
 
+    // Constructor for parsing the project objects in the MessageSendingActivity
+    public Project(String projectId, String title, String description, ProjectManager manager,
+                   Date startDate, Date dueDate) {
+        this.projectId = projectId;
+        this.title = title;
+        this.description = description;
+        this.manager = manager;
+        this.startDate = startDate;
+        this.dueDate = dueDate;
+        this.status = ProjectStatus.PLANNING;
+        this.teamMembers = new ArrayList<>();
+        this.tasks = new ArrayList<>();
+    }
+
     public String getProjectId() {
         return projectId;
     }
@@ -87,5 +101,10 @@ public class Project {
 
     public void setTitle(String projectTitle) {
         this.title = projectTitle;
+    }
+
+    @Override
+    public String toString() {
+        return this.getTitle();
     }
 }

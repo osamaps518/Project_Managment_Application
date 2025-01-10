@@ -15,6 +15,44 @@ public class Notification {
     private Date timestamp;
     private boolean isArchived;
     private String content;
+    private String projectId;
+
+
+
+    // Constructor for EmailDetail Activity
+    public Notification(String id, NotificationType type, String senderName,
+                        String title, Date timestamp, String senderId,
+                        String receiverId, String taskId, String projectId) {
+        this.id = id;
+        this.type = type;
+        this.senderName = senderName;
+        this.title = title;
+        this.timestamp = timestamp;
+        this.senderID = senderId;
+        this.receiverID = receiverId;
+        this.taskId = taskId;
+        this.projectId = projectId;
+    }
+
+    public Notification(String id, NotificationType type, String senderName,
+                        String title, Date timestamp, String senderID, String
+                                receiverID, String taskId) {
+        this.id = id;
+        this.type = type;
+        this.senderName = senderName;
+        this.title = title;
+        this.timestamp = timestamp;
+        this.senderID = senderID;
+        this.receiverID = receiverID;
+        this.taskId = taskId;
+    }
+
+    public String getProjectId() {
+        return projectId;
+    }
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
 
     public String getContent() {
         return content;
@@ -29,20 +67,7 @@ public class Notification {
     }
 
 
-    public Notification(String id, NotificationType type, String senderName,
-                        String title, Date timestamp, String senderID, String
-            receiverID, String taskId) {
-        this.id = id;
-        this.type = type;
-        this.senderName = senderName;
-        this.title = title;
-        this.timestamp = timestamp;
-        this.senderID = senderID;
-        this.receiverID = receiverID;
-        this.taskId = taskId;
-    }
-
-    // Getters and setters
+     // Getters and setters
     public String getId() {
         return id;
     }
@@ -73,5 +98,9 @@ public class Notification {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getReceiverId() {
+        return receiverID;
     }
 }

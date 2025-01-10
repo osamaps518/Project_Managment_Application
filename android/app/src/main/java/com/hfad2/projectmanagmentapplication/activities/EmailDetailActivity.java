@@ -83,10 +83,22 @@ public class EmailDetailActivity extends BaseProjectActivity {
     }
 
 
+    // TODO: This method needs to adjusted
+
+//    private void openReplyActivity() {
+//        Intent intent = new Intent(this, MessageSendingActivity.class);
+//        intent.putExtra("reply_to", emailNotification.getSenderId());
+//        intent.putExtra("subject", "Re: " + emailNotification.getTitle());
+//        startActivity(intent);
+//    }
+
     private void openReplyActivity() {
         Intent intent = new Intent(this, MessageSendingActivity.class);
         intent.putExtra("reply_to", emailNotification.getSenderId());
         intent.putExtra("subject", "Re: " + emailNotification.getTitle());
+        // We also need to pass these
+        intent.putExtra("user_id", emailNotification.getReceiverId()); // Current user
+        intent.putExtra("project_id", emailNotification.getProjectId()); // Need to add this to Notification model
         startActivity(intent);
     }
 }
