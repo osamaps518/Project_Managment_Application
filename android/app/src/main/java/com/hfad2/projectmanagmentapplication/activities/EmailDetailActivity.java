@@ -4,6 +4,7 @@ import static com.hfad2.projectmanagmentapplication.utils.DateUtils.formatTimest
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +25,7 @@ public class EmailDetailActivity extends BaseProjectActivity {
     private Notification emailNotification;
     private MaterialToolbar toolbar;
     private TextView txtSender, txtSubject, txtContent, txtTimestamp;
-    private ImageButton btnReply;
+    private ImageButton btnBack;
     private MessageRepository repository;
 
     @Override
@@ -42,20 +43,32 @@ public class EmailDetailActivity extends BaseProjectActivity {
         loadEmailContent();
     }
 
+
     private void initializeViews() {
         repository = new VolleyMessageRepository(this);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Remove the default back button from ActionBar since there's custom one
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        }
 
         txtSender = findViewById(R.id.text_sender);
         txtSubject = findViewById(R.id.text_subject);
         txtContent = findViewById(R.id.text_content);
         txtTimestamp = findViewById(R.id.text_timestamp);
 
-        btnReply = toolbar.findViewById(R.id.btn_reply);
+        // Set up the back button
+        btnBack = findViewById(R.id.btn_back);
+        btnBack.setOnClickListener(v -> onBackPressed());
+    }
 
-        btnReply.setOnClickListener(v -> openReplyActivity());
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        // Properly finish the activity and return to previous screen
+        finish();
     }
 
     private void loadEmailContent() {
@@ -76,29 +89,14 @@ public class EmailDetailActivity extends BaseProjectActivity {
     }
 
     private void updateUI() {
+        if (emailNotification == null) {
+            Log.e("EmailDetail", "Attempting to update UI with null notification");
+            return;
+        }
+
         txtSender.setText(emailNotification.getSenderName());
         txtSubject.setText(emailNotification.getTitle());
         txtTimestamp.setText(formatTimestamp(emailNotification.getTimestamp()));
         txtContent.setText(emailNotification.getContent());
-    }
-
-
-    // TODO: This method needs to adjusted
-
-//    private void openReplyActivity() {
-//        Intent intent = new Intent(this, MessageSendingActivity.class);
-//        intent.putExtra("reply_to", emailNotification.getSenderId());
-//        intent.putExtra("subject", "Re: " + emailNotification.getTitle());
-//        startActivity(intent);
-//    }
-
-    private void openReplyActivity() {
-        Intent intent = new Intent(this, MessageSendingActivity.class);
-        intent.putExtra("reply_to", emailNotification.getSenderId());
-        intent.putExtra("subject", "Re: " + emailNotification.getTitle());
-        // We also need to pass these
-        intent.putExtra("user_id", emailNotification.getReceiverId()); // Current user
-        intent.putExtra("project_id", emailNotification.getProjectId()); // Need to add this to Notification model
-        startActivity(intent);
     }
 }

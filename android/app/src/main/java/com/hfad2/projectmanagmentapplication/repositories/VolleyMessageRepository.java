@@ -82,13 +82,16 @@ public class VolleyMessageRepository implements MessageRepository {
                     NotificationType.EMAIL,
                     obj.getString("sender_name"),
                     obj.getString("title"),
-                    new Date(obj.getLong("timestamp") * 1000), // Convert Unix timestamp
+                    obj.getString("timestamp"), // Convert Unix timestamp
                     obj.getString("sender_id"),
                     obj.getString("receiver_id"),
                     obj.getString("task_id")
             );
             notification.setContent(obj.getString("content"));
-            notification.setArchived(obj.getBoolean("is_archived"));
+
+            // Parse if the notification is archived to boolean depending on the flag value
+            int is_archived = obj.getInt("is_archived");
+            notification.setArchived(is_archived == 1);
 
             callback.onSuccess(notification);
         } catch (JSONException e) {

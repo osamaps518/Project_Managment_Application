@@ -43,23 +43,23 @@ public class TestTeamMembersActivity extends AppCompatActivity {
 //    }
 
     // onCreate for launching the NotificationActivity
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        Intent intent = new Intent(this, NotificationActivity.class);
-//        intent.putExtra(PARAM_USER_ID, "user002");
-//        startActivity(intent);
-//        finish();
-//    }
-
-    // onCreate for launching the sendMessageActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = new Intent(this, MessageSendingActivity.class);
-        intent.putExtra(PARAM_USER_ID, "user002");  // Sarah Manager
-        intent.putExtra(PARAM_PROJECT_ID, "proj001"); // Mobile App Development project
+        Intent intent = new Intent(this, NotificationActivity.class);
+        intent.putExtra(PARAM_USER_ID, "user001");
         startActivity(intent);
         finish();
     }
+
+    // onCreate for launching the sendMessageActivity
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        Intent intent = new Intent(this, MessageSendingActivity.class);
+//        intent.putExtra(PARAM_USER_ID, "user002");  // Sarah Manager
+//        intent.putExtra(PARAM_PROJECT_ID, "proj001"); // Mobile App Development project
+//        startActivity(intent);
+//        finish();
+//    }
 }

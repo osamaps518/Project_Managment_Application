@@ -66,13 +66,13 @@ public class APIConfig {
     public static final String SEARCH_NOTIFICATIONS = BASE_URL + "notifications/search_notifications.php";
     public static final String REMOVE_NOTIFICATION = BASE_URL + "notifications/remove_notification.php";
     public static final String ARCHIVE_NOTIFICATION = BASE_URL + "notifications/archive_notification.php";
-    public static final String GET_EMAIL_CONTENT = BASE_URL + "notifications/get_email_content.php";
     public static final String FILTER_NOTIFICATIONS = BASE_URL + "notifications/filter_notifications.php";
 
-    // Email sending endpoints
+    // Email sending and receiving endpoints
     public static final String SEND_MESSAGE = BASE_URL + "emails/send_message.php";
     public static final String GET_USER_PROJECTS = BASE_URL + "emails/get_user_projects.php";
     public static final String GET_PROJECT_MEMBERS = BASE_URL + "emails/get_project_members.php";
+    public static final String GET_EMAIL_CONTENT = BASE_URL + "emails/get_email_content.php";
 
     /** Standard error messages */
     // Error messages

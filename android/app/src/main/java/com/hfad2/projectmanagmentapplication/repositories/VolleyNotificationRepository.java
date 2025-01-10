@@ -160,7 +160,7 @@ public class VolleyNotificationRepository implements NotificationRepository {
                 NotificationType.valueOf(obj.getString("type")),
                 obj.getString("sender_name"),
                 obj.getString("title"),
-                dateFormat.parse(obj.getString("timestamp")),
+                obj.getString("timestamp"),
                 obj.getString("sender_id"),
                 obj.getString("receiver_id"),
                 obj.getString("task_id")

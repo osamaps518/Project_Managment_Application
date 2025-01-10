@@ -22,6 +22,7 @@
     <string name="mark_as_completed">Mark as Completed</string>
     <string name="select_recipient">Select Recipient</string>
     <string name="select_project">Select Project</string>
+    <string name="back_button">Back</string>
     <string-array name="role_filters">
         <item>All Roles</item>
         <item>Developer</item>

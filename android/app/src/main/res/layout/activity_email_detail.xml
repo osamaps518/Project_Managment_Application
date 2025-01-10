@@ -5,37 +5,29 @@
         android:layout_height="match_parent"
         android:background="@color/theme">
 
-    <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            style="@style/Widget.App.Toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent">
-
-        <LinearLayout
+        <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                style="@style/Widget.App.Toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <ImageButton
-                    android:id="@+id/btn_back"
-                    style="@style/Widget.App.Toolbar.Icon"
-                    android:src="@drawable/ic_arrow_back"
-                    app:tint="@color/font_color" />
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-            <Space
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                <ImageButton
+                        android:id="@+id/btn_back"
+                        style="@style/Widget.App.Toolbar.Icon"
+                        android:src="@drawable/ic_arrow_back"
+                        android:contentDescription="@string/back_button"
+                        app:tint="@color/font_color" />
 
-            <ImageButton
-                    android:id="@+id/btn_reply"
-                    style="@style/Widget.App.Toolbar.Icon"
-                    android:src="@drawable/ic_reply"
-                    app:tint="@color/font_color" />
-        </LinearLayout>
-    </com.google.android.material.appbar.MaterialToolbar>
+                <!-- Removed the Space and Reply button -->
+            </LinearLayout>
+        </com.google.android.material.appbar.MaterialToolbar>
 
     <ScrollView
             android:layout_width="match_parent"

@@ -1,6 +1,10 @@
 package com.hfad2.projectmanagmentapplication.models;
 
 
+import android.util.Log;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 // Notification Model
@@ -17,7 +21,14 @@ public class Notification {
     private String content;
     private String projectId;
 
-
+    public void setTimestamp(String timestamp) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            this.timestamp = sdf.parse(timestamp);
+        } catch (ParseException e) {
+            Log.e("Notification", "Error parsing timestamp: " + e.getMessage());
+        }
+    }
 
     // Constructor for EmailDetail Activity
     public Notification(String id, NotificationType type, String senderName,
@@ -35,13 +46,13 @@ public class Notification {
     }
 
     public Notification(String id, NotificationType type, String senderName,
-                        String title, Date timestamp, String senderID, String
+                        String title, String timestamp, String senderID, String
                                 receiverID, String taskId) {
         this.id = id;
         this.type = type;
         this.senderName = senderName;
         this.title = title;
-        this.timestamp = timestamp;
+        setTimestamp(timestamp);
         this.senderID = senderID;
         this.receiverID = receiverID;
         this.taskId = taskId;
