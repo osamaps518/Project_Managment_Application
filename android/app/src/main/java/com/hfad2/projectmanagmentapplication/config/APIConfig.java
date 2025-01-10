@@ -6,10 +6,13 @@ package com.hfad2.projectmanagmentapplication.config;
  */
 public class APIConfig {
     /** Base URL for API endpoints, configured for Android emulator localhost */
-//    public static final String BASE_URL = "http://10.0.2.2/project_api/";  // Android emulator localhost
+    // Android emulator localhost
     public static final String BASE_URL = "http://10.0.2.2/project_management/";
+    // Physical device localhost
+//    public static final String BASE_URL = "http://192.168.122.255/project_management/";
 
     // Request parameters for team members
+    public static final String PARAM_PROJECT_MANAGER_ID = "project_manager_id";
     public static final String PARAM_PROJECT_ID = "project_id";
     public static final String PARAM_EMPLOYEE_ID = "employee_id";
     public static final String PARAM_QUERY = "query";
@@ -46,26 +49,25 @@ public class APIConfig {
     public static final String GET_ASSIGNED_TASK = BASE_URL + "team_members/get_assigned_task.php";
 
     // Task management endpoints
-    public static final String GET_ALL_TASKS = BASE_URL + "get_tasks.php";
-    public static final String ADD_TASK = BASE_URL + "add_task.php";
-    public static final String REMOVE_TASK = BASE_URL + "remove_task.php";
-    public static final String SEARCH_TASKS = BASE_URL + "search_tasks.php";
-    public static final String FILTER_TASKS = BASE_URL + "filter_tasks.php";
-    public static final String COMPLETE_TASK = BASE_URL + "complete_task.php";
+    public static final String GET_ALL_TASKS = BASE_URL + "tasks/get_tasks.php";
+    public static final String ADD_TASK = BASE_URL + "tasks/add_task.php";
+    public static final String REMOVE_TASK = BASE_URL + "tasks/remove_task.php";
+    public static final String SEARCH_TASKS = BASE_URL + "tasks/search_tasks.php";
+    public static final String FILTER_TASKS = BASE_URL + "tasks/filter_tasks.php";
+    public static final String COMPLETE_TASK = BASE_URL + "tasks/complete_task.php";
 
     // Task comment endpoints
-    public static final String GET_TASK_COMMENTS = BASE_URL + "get_task_comments.php";
-    public static final String ADD_TASK_COMMENT = BASE_URL + "add_task_comment.php";
+    public static final String GET_TASK_COMMENTS = BASE_URL + "tasks/get_task_comments.php";
+    public static final String ADD_TASK_COMMENT = BASE_URL + "tasks/add_task_comment.php";
 
     // Notification endpoints
-    public static final String GET_NOTIFICATIONS = BASE_URL + "get_notifications.php";
-    public static final String SEARCH_NOTIFICATIONS = BASE_URL + "search_notifications.php";
-    public static final String REMOVE_NOTIFICATION = BASE_URL + "remove_notification.php";
-    public static final String ARCHIVE_NOTIFICATION = BASE_URL + "archive_notification.php";
-    public static final String GET_EMAIL_CONTENT = BASE_URL + "get_email_content.php";
-    public static final String FILTER_NOTIFICATIONS = BASE_URL + "filter_notifications.php";
-    public static final String SEND_MESSAGE = BASE_URL + "send_message.php";
-
+    public static final String GET_NOTIFICATIONS = BASE_URL + "notifications/get_notifications.php";
+    public static final String SEARCH_NOTIFICATIONS = BASE_URL + "notifications/search_notifications.php";
+    public static final String REMOVE_NOTIFICATION = BASE_URL + "notifications/remove_notification.php";
+    public static final String ARCHIVE_NOTIFICATION = BASE_URL + "notifications/archive_notification.php";
+    public static final String GET_EMAIL_CONTENT = BASE_URL + "notifications/get_email_content.php";
+    public static final String FILTER_NOTIFICATIONS = BASE_URL + "notifications/filter_notifications.php";
+    public static final String SEND_MESSAGE = BASE_URL + "notifications/send_message.php";
 
     /** Standard error messages */
     // Error messages

@@ -18,6 +18,9 @@ public class Project {
     private Date dueDate;
     private Date completedDate;
 
+    public Project(){
+
+    }
     public Project(String title, String description, ProjectManager manager,
                    Date startDate, Date dueDate) {
         this.projectId = UUID.randomUUID().toString();
@@ -33,6 +36,10 @@ public class Project {
 
     public String getProjectId() {
         return projectId;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     // Project management methods
@@ -76,5 +83,9 @@ public class Project {
 
     public List<Task> getTasks() {
         return tasks;
+    }
+
+    public void setTitle(String projectTitle) {
+        this.title = projectTitle;
     }
 }

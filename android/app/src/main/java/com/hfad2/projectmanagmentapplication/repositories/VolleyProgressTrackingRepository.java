@@ -60,7 +60,7 @@ public class VolleyProgressTrackingRepository implements ProgressTrackingReposit
      */
     @Override
     public void getAllTasks(String projectId, OperationCallback<List<Task>> callback) {
-        String url = APIConfig.GET_ALL_TASKS + "?" + APIConfig.PARAM_PROJECT_ID + "=" + projectId;
+        String url = APIConfig.GET_ALL_TASKS + "?" + APIConfig.PARAM_PROJECT_MANAGER_ID + "=" + projectId;
 
         StringRequest request = new StringRequest(Request.Method.GET, url,
                 response -> parseTaskList(response, callback),
@@ -73,14 +73,14 @@ public class VolleyProgressTrackingRepository implements ProgressTrackingReposit
      * Searches tasks by title or description.
      * Endpoint: search_tasks.php
      *
-     * @param projectId Project identifier
+     * @param projectManagerId Project identifier
      * @param query Search text to match against task title/description
      * @param callback Returns filtered List<Task> on success, error message on failure
      */
     @Override
-    public void searchTasks(String projectId, String query, OperationCallback<List<Task>> callback) {
+    public void searchTasks(String projectManagerId, String query, OperationCallback<List<Task>> callback) {
         String url = APIConfig.SEARCH_TASKS + "?" +
-                APIConfig.PARAM_PROJECT_ID + "=" + projectId + "&" +
+                APIConfig.PARAM_PROJECT_MANAGER_ID + "=" + projectManagerId + "&" +
                 APIConfig.PARAM_QUERY + "=" + Uri.encode(query);
 
         StringRequest request = new StringRequest(Request.Method.GET, url,
@@ -94,15 +94,15 @@ public class VolleyProgressTrackingRepository implements ProgressTrackingReposit
      * Filters tasks by their current status.
      * Endpoint: filter_tasks.php
      *
-     * @param projectId Project identifier
+     * @param projectManagerId Project identifier
      * @param status TaskStatus to filter by
      * @param callback Returns filtered List<Task> on success, error message on failure
      */
     @Override
-    public void filterTasksByStatus(String projectId, TaskStatus status,
+    public void filterTasksByStatus(String projectManagerId, TaskStatus status,
                                     OperationCallback<List<Task>> callback) {
         String url = APIConfig.FILTER_TASKS + "?" +
-                APIConfig.PARAM_PROJECT_ID + "=" + projectId + "&" +
+                APIConfig.PARAM_PROJECT_MANAGER_ID + "=" + projectManagerId + "&" +
                 APIConfig.PARAM_STATUS + "=" + status.name();
 
         StringRequest request = new StringRequest(Request.Method.GET, url,
@@ -156,6 +156,7 @@ public class VolleyProgressTrackingRepository implements ProgressTrackingReposit
         queue.add(request);
     }
 
+    // TODO: This method uses projectID where there's no project id in the first place, also, this method probably would be deleted in the future
     /**
      * Creates a new task in the project.
      * Endpoint: add_task.php
@@ -239,17 +240,18 @@ public class VolleyProgressTrackingRepository implements ProgressTrackingReposit
      * @param obj JSON object containing task data
      * @return Parsed Task object
      */
+    // TODO: adjust the endpoint to return the role
     private Task parseTaskFromJson(JSONObject obj) throws JSONException, ParseException {
         // Create a temporary User for the assigned employee
         User assignedUser = new User(
                 obj.getString("assigned_email"),
                 obj.getString("assigned_name")
         );
-        // TODO: adjust the endpoint to return the role
-//        Employee assignedEmployee = new Employee(assignedUser);
         Employee assignedEmployee = new Employee(assignedUser, "Unknown");
+
         // Create a temporary Project
-        Project project = null; // Project details should be set by the Activity
+        Project project = new Project();
+        project.setTitle(obj.getString("project_title"));
 
         // Parse the task
         Task task = new Task(

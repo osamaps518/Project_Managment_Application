@@ -3,6 +3,7 @@ package com.hfad2.projectmanagmentapplication.activities;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -10,7 +11,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
-import android.widget.SearchView;
+import androidx.appcompat.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,27 +63,35 @@ public class ProgressTrackingActivity extends BaseProjectActivity {
     private ProgressTrackingRepository repository;
     private CardAdapter adapter;
     private List<CardData> taskCards;
-    private String projectId;
+    private String projectManagerId;
     private SearchView searchView;
     private boolean isSearchActive = false;
     private Spinner statusFilterSpinner;
 
+    // TODO: Make sure that you actually need the projectId, otherwise remove it
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        projectId = getIntent().getStringExtra("project_id");
-        if (projectId == null) {
-            finish();
-            return;
-        }
+        Log.d("ProgressTrackingActivity", "onCreate started");
         setContentView(R.layout.activity_track_progress);
 
-        initialize();
-        setupRecyclerView();
-        loadTasks();
-        setupSearch();
-        setupStatusFilter();
+        try {
+            projectManagerId = getIntent().getStringExtra("project_manager_id");
+            if (projectManagerId == null) {
+                finish();
+                return;
+            }
+            initialize();
+            setupRecyclerView();
+            loadTasks();
+            setupSearch();
+            setupStatusFilter();
+        } catch (Exception e) {
+            Log.e("ProgressTrackingActivity", "Error during initialization", e);
+        }
+        Log.d("ProgressTrackingActivity", "onCreate completed");
     }
+
 
     /**
      * Initializes all UI components and sets up the repository.
@@ -107,16 +116,18 @@ public class ProgressTrackingActivity extends BaseProjectActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbarTitle.setText(R.string.nav_progress);
 
-        searchView = new SearchView(this);
+        searchView = findViewById(R.id.search_view);
         searchView.setQueryHint("Search tasks...");
         searchView.setVisibility(View.GONE);
-
-        statusFilterSpinner = new Spinner(this);
+        // Set filter spinner for task status
+        statusFilterSpinner = toolbar.findViewById(R.id.filter_spinner);
         ArrayAdapter<TaskStatus> spinnerAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, TaskStatus.values());
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         statusFilterSpinner.setAdapter(spinnerAdapter);
+        // Hidden by default until filter button is clicked
         statusFilterSpinner.setVisibility(View.GONE);
+
         fabAdd.setOnClickListener(v -> showAddTaskDialog());
     }
 
@@ -137,7 +148,7 @@ public class ProgressTrackingActivity extends BaseProjectActivity {
             Intent intent = new Intent(this, TaskDetailActivity.class);
             Task task = (Task) item.getData();
             intent.putExtra("task_id", task.getTaskId());
-            intent.putExtra("project_id", projectId);
+            intent.putExtra("project_manager_id", projectManagerId);
             startActivity(intent);
         });
 
@@ -153,7 +164,7 @@ public class ProgressTrackingActivity extends BaseProjectActivity {
      * - Status icon
      */
     private void loadTasks() {
-        repository.getAllTasks(projectId, new OperationCallback<List<Task>>() {
+        repository.getAllTasks(projectManagerId, new OperationCallback<List<Task>>() {
             @Override
             public void onSuccess(List<Task> tasks) {
                 taskCards.clear();
@@ -161,7 +172,8 @@ public class ProgressTrackingActivity extends BaseProjectActivity {
                     CardData card = new CardData();
                     card.setLine1(task.getTitle());
                     card.setLine2(task.getAssignedEmployee().getFullName());
-                    card.setLine3(task.getProject().getProjectId());
+                    Log.d("Name of the employee:","Name:" + task.getAssignedEmployee().getUserName());
+                    card.setLine3(task.getProject().getTitle());
                     card.setImage(getStatusIcon(task.getStatus()));
                     card.setData(task);
                     taskCards.add(card);
@@ -328,9 +340,13 @@ public class ProgressTrackingActivity extends BaseProjectActivity {
     private void setupSearch() {
         btnSearch.setOnClickListener(v -> {
             if (!isSearchActive) {
+                // Hide title, show search view
                 toolbarTitle.setVisibility(View.GONE);
+                btnSearch.setVisibility(View.GONE);
+                btnFilter.setVisibility(View.GONE);
+                btnMenu.setVisibility(View.GONE);
                 searchView.setVisibility(View.VISIBLE);
-                searchView.setIconified(false);
+                searchView.setIconified(false);  // Automatically show keyboard
                 isSearchActive = true;
             }
         });
@@ -350,10 +366,14 @@ public class ProgressTrackingActivity extends BaseProjectActivity {
         });
 
         searchView.setOnCloseListener(() -> {
+            // Restore original toolbar state
             searchView.setVisibility(View.GONE);
             toolbarTitle.setVisibility(View.VISIBLE);
+            btnMenu.setVisibility(View.VISIBLE);
+            btnSearch.setVisibility(View.VISIBLE);
+            btnFilter.setVisibility(View.VISIBLE);
             isSearchActive = false;
-            loadTasks();
+            loadTasks();  // Reset to show all tasks
             return true;
         });
     }
@@ -370,15 +390,15 @@ public class ProgressTrackingActivity extends BaseProjectActivity {
             return;
         }
 
-        repository.searchTasks(projectId, query, new OperationCallback<List<Task>>() {
+        repository.searchTasks(projectManagerId, query, new OperationCallback<List<Task>>() {
             @Override
             public void onSuccess(List<Task> tasks) {
                 taskCards.clear();
                 for (Task task : tasks) {
                     CardData card = new CardData();
                     card.setLine1(task.getTitle());
-                    card.setLine2(task.getAssignedEmployee().getFullName());
-                    card.setLine3(task.getProject().getProjectId());
+                    card.setLine2(task.getAssignedEmployee().getUserName());
+                    card.setLine3(task.getProject().getTitle());
                     card.setImage(getStatusIcon(task.getStatus()));
                     card.setData(task);
                     taskCards.add(card);
@@ -404,8 +424,10 @@ public class ProgressTrackingActivity extends BaseProjectActivity {
         btnFilter.setOnClickListener(v -> {
             if (statusFilterSpinner.getVisibility() == View.VISIBLE) {
                 statusFilterSpinner.setVisibility(View.GONE);
+                btnSearch.setVisibility(View.VISIBLE);
             } else {
                 statusFilterSpinner.setVisibility(View.VISIBLE);
+                btnSearch.setVisibility(View.GONE);
             }
         });
 
@@ -430,15 +452,15 @@ public class ProgressTrackingActivity extends BaseProjectActivity {
      * @param status TaskStatus to filter by
      */
     private void filterByStatus(TaskStatus status) {
-        repository.filterTasksByStatus(projectId, status, new OperationCallback<List<Task>>() {
+        repository.filterTasksByStatus(projectManagerId, status, new OperationCallback<List<Task>>() {
             @Override
             public void onSuccess(List<Task> tasks) {
                 taskCards.clear();
                 for (Task task : tasks) {
                     CardData card = new CardData();
                     card.setLine1(task.getTitle());
-                    card.setLine2(task.getAssignedEmployee().getFullName());
-                    card.setLine3(task.getProject().getProjectId());
+                    card.setLine2(task.getAssignedEmployee().getUserName());
+                    card.setLine3(task.getProject().getTitle());
                     card.setImage(getStatusIcon(task.getStatus()));
                     card.setData(task);
                     taskCards.add(card);
@@ -454,6 +476,7 @@ public class ProgressTrackingActivity extends BaseProjectActivity {
         });
     }
 
+    //TODO:This method requires projectId, it'll be removed if not needed, currently, it takes a dummy projectId
     /**
      * Shows dialog for adding new task.
      * Dialog includes:
@@ -489,6 +512,7 @@ public class ProgressTrackingActivity extends BaseProjectActivity {
                             dueDatePicker.getMonth(),
                             dueDatePicker.getDayOfMonth());
 
+                    String projectId = "";
                     Task newTask = repository.createTask(projectId, title, description,
                             priority, calendar.getTime());
                     loadTasks();

@@ -110,7 +110,8 @@ public class TeamMembersActivity extends BaseProjectActivity {
         searchView.setVisibility(View.GONE);  // Hidden by default
 
         // Setup role filter spinner
-        roleFilterSpinner = toolbar.findViewById(R.id.role_filter_spinner);
+        // TODO: Remember to rename this one to filter_spinner to make it more generic
+        roleFilterSpinner = toolbar.findViewById(R.id.filter_spinner);
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.role_filters, android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
