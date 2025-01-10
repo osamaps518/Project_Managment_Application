@@ -1,5 +1,7 @@
 package com.hfad2.projectmanagmentapplication.testing;
 
+import static com.hfad2.projectmanagmentapplication.config.APIConfig.PARAM_USER_ID;
+
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -10,8 +12,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.hfad2.projectmanagmentapplication.R;
+import com.hfad2.projectmanagmentapplication.activities.NotificationActivity;
 import com.hfad2.projectmanagmentapplication.activities.ProgressTrackingActivity;
 import com.hfad2.projectmanagmentapplication.activities.TeamMembersActivity;
+import com.hfad2.projectmanagmentapplication.config.APIConfig;
 
 public class TestTeamMembersActivity extends AppCompatActivity {
 
@@ -27,11 +31,21 @@ public class TestTeamMembersActivity extends AppCompatActivity {
 
 
     // onCreate for launching the ProgressTrackingActivity
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        Intent intent = new Intent(this, ProgressTrackingActivity.class);
+//        intent.putExtra("project_manager_id", "user002");
+//        startActivity(intent);
+//        finish();
+//    }
+
+    // onCreate for launching the NotificationActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = new Intent(this, ProgressTrackingActivity.class);
-        intent.putExtra("project_manager_id", "user002");
+        Intent intent = new Intent(this, NotificationActivity.class);
+        intent.putExtra(PARAM_USER_ID, "user002");
         startActivity(intent);
         finish();
     }

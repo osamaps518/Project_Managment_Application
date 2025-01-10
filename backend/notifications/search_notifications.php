@@ -1,5 +1,5 @@
 <?php
-require_once 'database.php';
+require_once '../config/database.php';
 
 if(isset($_GET['user_id']) && isset($_GET['query'])) {
     $user_id = $_GET['user_id'];

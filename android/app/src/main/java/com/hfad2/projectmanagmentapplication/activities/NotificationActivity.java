@@ -2,6 +2,7 @@
 package com.hfad2.projectmanagmentapplication.activities;
 
 
+import static com.hfad2.projectmanagmentapplication.config.APIConfig.PARAM_USER_ID;
 import static com.hfad2.projectmanagmentapplication.utils.DateUtils.formatTimestamp;
 
 import android.content.Intent;
@@ -12,7 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
-import android.widget.SearchView;
+import androidx.appcompat.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -69,6 +70,7 @@ public class NotificationActivity extends BaseProjectActivity {
     private boolean isSearchActive = false;
     private boolean showArchived = false;
     private Spinner filterSpinner;
+    private String userId;
 
     /**
      * Creates and initializes the activity's layout and components.
@@ -78,7 +80,8 @@ public class NotificationActivity extends BaseProjectActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getCurrentUserId() == null) {
+        userId =  getIntent().getStringExtra(PARAM_USER_ID);
+        if (userId == null) {
             Toast.makeText(this, "User ID required", Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -105,13 +108,14 @@ public class NotificationActivity extends BaseProjectActivity {
         btnSearch = toolbar.findViewById(R.id.btn_search);
         btnFilter = toolbar.findViewById(R.id.btn_filter);
         toolbarTitle = toolbar.findViewById(R.id.toolbar_title);
-        filterSpinner = new Spinner(this);
+        filterSpinner = findViewById(R.id.filter_spinner);
+        filterSpinner.setVisibility(View.GONE);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbarTitle.setText(R.string.nav_notifications);
 
-        searchView = new SearchView(this);
+        searchView = findViewById(R.id.search_view);
         searchView.setQueryHint("Search notifications...");
         searchView.setVisibility(View.GONE);
 
@@ -122,15 +126,6 @@ public class NotificationActivity extends BaseProjectActivity {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         filterSpinner.setAdapter(spinnerAdapter);
         filterSpinner.setVisibility(View.GONE);
-
-        // Setup filter button
-        btnFilter.setOnClickListener(v -> {
-            if (filterSpinner.getVisibility() == View.VISIBLE) {
-                filterSpinner.setVisibility(View.GONE);
-            } else {
-                filterSpinner.setVisibility(View.VISIBLE);
-            }
-        });
     }
 
 
@@ -169,7 +164,7 @@ public class NotificationActivity extends BaseProjectActivity {
      * If an error occurs during loading, an error message is displayed.
      */
     private void loadNotifications() {
-        repository.toggleArchivedVisibility(showArchived, new OperationCallback<List<Notification>>() {
+        repository.loadNotifications(userId, showArchived, new OperationCallback<List<Notification>>() {
             @Override
             public void onSuccess(List<Notification> notifications) {
                 notificationCards.clear();
@@ -344,6 +339,17 @@ private void archiveNotification(String notificationId) {
      * Handles filter selection changes and updates notification list.
      */
     private void setupSpinnerFilter() {
+        // Handle filter button clicks
+        btnFilter.setOnClickListener(v -> {
+            if (filterSpinner.getVisibility() == View.VISIBLE) {
+                filterSpinner.setVisibility(View.GONE);
+                btnSearch.setVisibility(View.VISIBLE);
+            } else {
+                filterSpinner.setVisibility(View.VISIBLE);
+                btnSearch.setVisibility(View.GONE);
+            }
+        });
+
         filterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -379,7 +385,7 @@ private void archiveNotification(String notificationId) {
      * @param type NotificationType to filter by
      */
     private void filterByType(NotificationType type) {
-        repository.toggleArchivedVisibility(showArchived, new OperationCallback<List<Notification>>() {
+        repository.loadNotifications(userId, showArchived, new OperationCallback<List<Notification>>() {
             @Override
             public void onSuccess(List<Notification> notifications) {
                 notificationCards.clear();
@@ -425,9 +431,13 @@ private void archiveNotification(String notificationId) {
     private void setupSearch() {
         btnSearch.setOnClickListener(v -> {
             if (!isSearchActive) {
+                // Hide title, show search view
                 toolbarTitle.setVisibility(View.GONE);
+                btnSearch.setVisibility(View.GONE);
+                btnFilter.setVisibility(View.GONE);
+                btnMenu.setVisibility(View.GONE);
                 searchView.setVisibility(View.VISIBLE);
-                searchView.setIconified(false);
+                searchView.setIconified(false);  // Automatically show keyboard
                 isSearchActive = true;
             }
         });
@@ -447,10 +457,14 @@ private void archiveNotification(String notificationId) {
         });
 
         searchView.setOnCloseListener(() -> {
+            // Restore original toolbar state
             searchView.setVisibility(View.GONE);
             toolbarTitle.setVisibility(View.VISIBLE);
+            btnMenu.setVisibility(View.VISIBLE);
+            btnSearch.setVisibility(View.VISIBLE);
+            btnFilter.setVisibility(View.VISIBLE);
             isSearchActive = false;
-            loadNotifications();
+            loadNotifications();  // Reset to show all tasks
             return true;
         });
     }
@@ -467,7 +481,7 @@ private void archiveNotification(String notificationId) {
             return;
         }
 
-        repository.searchNotifications(getCurrentUserId(), query,
+        repository.searchNotifications(userId, query,
                 new OperationCallback<List<Notification>>() {
                     @Override
                     public void onSuccess(List<Notification> notifications) {
@@ -495,14 +509,5 @@ private void archiveNotification(String notificationId) {
             notificationCards.add(card);
         }
         adapter.notifyDataSetChanged();
-    }
-
-    /**
-     * Retrieves current user ID from intent extras.
-     *
-     * @return User ID string or null if not provided
-     */
-    private String getCurrentUserId() {
-        return getIntent().getStringExtra("user_id");
     }
 }

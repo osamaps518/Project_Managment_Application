@@ -9,6 +9,7 @@ public class Notification {
     private NotificationType type;
     private String senderName;
     private String senderID;
+    private String receiverID;
     private String title;
     private String taskId;
     private Date timestamp;
@@ -29,13 +30,15 @@ public class Notification {
 
 
     public Notification(String id, NotificationType type, String senderName,
-                        String title, Date timestamp, String senderID, String taskId) {
+                        String title, Date timestamp, String senderID, String
+            receiverID, String taskId) {
         this.id = id;
         this.type = type;
         this.senderName = senderName;
         this.title = title;
         this.timestamp = timestamp;
         this.senderID = senderID;
+        this.receiverID = receiverID;
         this.taskId = taskId;
     }
 

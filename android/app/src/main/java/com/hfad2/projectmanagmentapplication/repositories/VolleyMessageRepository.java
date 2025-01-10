@@ -77,6 +77,7 @@ public class VolleyMessageRepository implements MessageRepository {
                     obj.getString("title"),
                     new Date(obj.getLong("timestamp") * 1000), // Convert Unix timestamp
                     obj.getString("sender_id"),
+                    obj.getString("receiver_id"),
                     obj.getString("task_id")
             );
             notification.setContent(obj.getString("content"));

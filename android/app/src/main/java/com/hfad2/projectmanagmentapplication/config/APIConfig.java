@@ -32,6 +32,7 @@ public class APIConfig {
     public static final String PARAM_CONTENT = "content";
 
     // Request parameters for notifications
+    public static final String PARAM_USER_ID = "user_id";
     public static final String PARAM_NOTIFICATION_ID = "notification_id";
     public static final String PARAM_START_DATE = "start_date";
     public static final String PARAM_END_DATE = "end_date";

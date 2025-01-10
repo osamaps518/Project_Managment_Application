@@ -1,5 +1,5 @@
 <?php
-require_once 'database.php';
+require_once '../config/database.php';
 
 if($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['notification_id'])) {
     $notification_id = $_POST['notification_id'];
