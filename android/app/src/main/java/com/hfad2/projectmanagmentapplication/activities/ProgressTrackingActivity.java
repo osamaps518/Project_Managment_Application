@@ -11,6 +11,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
+
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -54,7 +56,7 @@ import java.util.List;
  * <p>
  * Layout file: activity_track_progress.xml
  */
-public class ProgressTrackingActivity extends BaseProjectActivity {
+public class ProgressTrackingActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private FloatingActionButton fabAdd;
     private MaterialToolbar toolbar;

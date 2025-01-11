@@ -10,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -40,7 +42,7 @@ import java.util.List;
  * Displays a list of team members using a card-based interface with search and filter capabilities.
  * Supports operations like viewing member details, removing members, and managing member tasks.
  */
-public class TeamMembersActivity extends BaseProjectActivity {
+public class TeamMembersActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private FloatingActionButton fabAdd;
     private MaterialToolbar toolbar;

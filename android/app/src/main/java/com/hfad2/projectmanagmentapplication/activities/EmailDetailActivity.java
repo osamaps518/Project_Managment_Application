@@ -9,6 +9,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.material.appbar.MaterialToolbar;
 import com.hfad2.projectmanagmentapplication.R;
 import com.hfad2.projectmanagmentapplication.models.Notification;
@@ -20,7 +22,7 @@ import com.hfad2.projectmanagmentapplication.repositories.VolleyMessageRepositor
  * Activity for displaying full email content from notifications.
  * Provides options to reply, archive, and navigate email details.
  */
-public class EmailDetailActivity extends BaseProjectActivity {
+public class EmailDetailActivity extends AppCompatActivity {
     private String notificationId;
     private Notification emailNotification;
     private MaterialToolbar toolbar;

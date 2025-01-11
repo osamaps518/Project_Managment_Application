@@ -13,6 +13,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.hfad2.projectmanagmentapplication.R;
@@ -29,7 +31,7 @@ import java.util.stream.Collectors;
  * Activity for composing and sending messages to project team members.
  * Handles message composition, attachments, and integration with MessageRepository.
  */
-public class MessageSendingActivity extends BaseProjectActivity {
+public class MessageSendingActivity extends AppCompatActivity {
     private static final int PICK_ATTACHMENT_REQUEST = 1;
 
     private MaterialToolbar toolbar;
