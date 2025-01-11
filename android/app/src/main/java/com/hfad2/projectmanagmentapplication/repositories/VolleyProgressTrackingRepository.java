@@ -3,6 +3,7 @@ package com.hfad2.projectmanagmentapplication.repositories;
 import android.content.Context;
 import android.net.Uri;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
@@ -55,12 +56,12 @@ public class VolleyProgressTrackingRepository implements ProgressTrackingReposit
      * Retrieves all tasks for a specific project.
      * Endpoint: get_tasks.php
      *
-     * @param projectId Project identifier
+     * @param managerId Project identifier
      * @param callback Returns List<Task> on success, error message on failure
      */
     @Override
-    public void getAllTasks(String projectId, OperationCallback<List<Task>> callback) {
-        String url = APIConfig.GET_ALL_TASKS + "?" + APIConfig.PARAM_PROJECT_MANAGER_ID + "=" + projectId;
+    public void getAllTasks(String managerId, OperationCallback<List<Task>> callback) {
+        String url = APIConfig.GET_ALL_TASKS + "?" + APIConfig.PARAM_MANAGER_ID + "=" + managerId;
 
         StringRequest request = new StringRequest(Request.Method.GET, url,
                 response -> parseTaskList(response, callback),
@@ -73,14 +74,14 @@ public class VolleyProgressTrackingRepository implements ProgressTrackingReposit
      * Searches tasks by title or description.
      * Endpoint: search_tasks.php
      *
-     * @param projectManagerId Project identifier
+     * @param managerId Project identifier
      * @param query Search text to match against task title/description
      * @param callback Returns filtered List<Task> on success, error message on failure
      */
     @Override
-    public void searchTasks(String projectManagerId, String query, OperationCallback<List<Task>> callback) {
+    public void searchTasks(String managerId, String query, OperationCallback<List<Task>> callback) {
         String url = APIConfig.SEARCH_TASKS + "?" +
-                APIConfig.PARAM_PROJECT_MANAGER_ID + "=" + projectManagerId + "&" +
+                APIConfig.PARAM_MANAGER_ID + "=" + managerId + "&" +
                 APIConfig.PARAM_QUERY + "=" + Uri.encode(query);
 
         StringRequest request = new StringRequest(Request.Method.GET, url,
@@ -94,15 +95,15 @@ public class VolleyProgressTrackingRepository implements ProgressTrackingReposit
      * Filters tasks by their current status.
      * Endpoint: filter_tasks.php
      *
-     * @param projectManagerId Project identifier
+     * @param managerId Project identifier
      * @param status TaskStatus to filter by
      * @param callback Returns filtered List<Task> on success, error message on failure
      */
     @Override
-    public void filterTasksByStatus(String projectManagerId, TaskStatus status,
+    public void filterTasksByStatus(String managerId, TaskStatus status,
                                     OperationCallback<List<Task>> callback) {
         String url = APIConfig.FILTER_TASKS + "?" +
-                APIConfig.PARAM_PROJECT_MANAGER_ID + "=" + projectManagerId + "&" +
+                APIConfig.PARAM_MANAGER_ID + "=" + managerId + "&" +
                 APIConfig.PARAM_STATUS + "=" + status.name();
 
         StringRequest request = new StringRequest(Request.Method.GET, url,
@@ -156,42 +157,40 @@ public class VolleyProgressTrackingRepository implements ProgressTrackingReposit
         queue.add(request);
     }
 
-    // TODO: This method uses projectID where there's no project id in the first place, also, this method probably would be deleted in the future
     /**
-     * Creates a new task in the project.
-     * Endpoint: add_task.php
-     * Note: Returns a temporary Task object while the server request is processed
+     * Creates a new task in the project and assigns it to a user.
+     * The backend will validate that the assigned user belongs to the project
+     * before creating the task.
      *
      * @param projectId Project identifier
      * @param title Task title
      * @param description Task description
      * @param priority Task priority level
      * @param dueDate Task due date
-     * @return Temporary Task object
+     * @param assignedTo User ID of the employee assigned to this task
+     * @param callback Callback to handle success/failure of task creation
      */
     @Override
-    public Task createTask(String projectId, String title, String description,
-                           TaskPriority priority, Date dueDate) {
+    public void createTask(String projectId, String title, String description,
+                           TaskPriority priority, Date dueDate, String assignedTo,
+                           OperationCallback<Boolean> callback) {
+
         StringRequest request = new StringRequest(Request.Method.POST, APIConfig.ADD_TASK,
-                response -> parseBasicResponse(response, new OperationCallback<Boolean>() {
-                    @Override
-                    public void onSuccess(Boolean result) {
-                        // Success is handled via the returned Task object
+                response -> {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        boolean isSuccess = !jsonResponse.getBoolean("error");
+                        if (isSuccess) {
+                            callback.onSuccess(true);
+                        } else {
+                            callback.onError(jsonResponse.getString("message"));
+                        }
+                    } catch (JSONException e) {
+                        callback.onError("Error parsing server response: " + e.getMessage());
                     }
+                },
+                error -> handleVolleyError(error, callback)) {
 
-                    @Override
-                    public void onError(String error) {
-                        // Errors are handled via standard error handling
-                    }
-                }),
-                error -> handleVolleyError(error, new OperationCallback<Boolean>() {
-                    @Override
-                    public void onSuccess(Boolean result) {}
-
-                    @Override
-                    public void onError(String error) {}
-                })) {
-            // Add task parameters to the Post request
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
@@ -200,16 +199,21 @@ public class VolleyProgressTrackingRepository implements ProgressTrackingReposit
                 params.put(APIConfig.PARAM_DESCRIPTION, description);
                 params.put(APIConfig.PARAM_PRIORITY, priority.name());
                 params.put(APIConfig.PARAM_DUE_DATE, dateFormat.format(dueDate));
+                params.put(APIConfig.PARAM_ASSIGNED_TO, assignedTo);
                 return params;
             }
         };
-        queue.add(request);
 
-        // Return a temporary Task object
-        return new Task(title, description, null, priority, dueDate);
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                30000,  // 30 seconds timeout
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        ));
+
+        queue.add(request);
     }
 
-    /**
+       /**
      * Parses JSON response containing task list.
      * Creates Task objects with temporary User and Project references.
      *
@@ -240,20 +244,25 @@ public class VolleyProgressTrackingRepository implements ProgressTrackingReposit
      * @param obj JSON object containing task data
      * @return Parsed Task object
      */
-    // TODO: adjust the endpoint to return the role
     private Task parseTaskFromJson(JSONObject obj) throws JSONException, ParseException {
-        // Create a temporary User for the assigned employee
+        // Updated to match new schema structure
         User assignedUser = new User(
-                obj.getString("assigned_email"),
-                obj.getString("assigned_name")
+                obj.getString("user_id"),
+                obj.getString("username"),  // Using username since email was removed
+                obj.getString("full_name"),
+                obj.getString("username"),  // Username used twice since email was removed
+                "default_profile"  // Default profile image
         );
-        Employee assignedEmployee = new Employee(assignedUser, "Unknown");
 
-        // Create a temporary Project
+        // Get role from employees table
+        String role = obj.has("role") ? obj.getString("role") : "Employee";
+        Employee assignedEmployee = new Employee(assignedUser, role);
+
+        // Create Project object
         Project project = new Project();
         project.setTitle(obj.getString("project_title"));
 
-        // Parse the task
+        // Parse task data
         Task task = new Task(
                 obj.getString("title"),
                 obj.getString("description"),
@@ -262,12 +271,13 @@ public class VolleyProgressTrackingRepository implements ProgressTrackingReposit
                 dateFormat.parse(obj.getString("due_date"))
         );
 
+        task.setTaskId(obj.getString("task_id")); // Make sure to set the task ID
         task.setStatus(TaskStatus.valueOf(obj.getString("status")));
         task.setAssignedEmployee(assignedEmployee);
 
         return task;
     }
-
+//
     /**
      * Parses basic boolean response from server.
      * Expects JSON with "error" field.

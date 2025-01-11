@@ -23,6 +23,22 @@
     <string name="select_recipient">Select Recipient</string>
     <string name="select_project">Select Project</string>
     <string name="back_button">Back</string>
+    <string name="create_new_project">Create New Project</string>
+    <string name="save">Save</string>
+    <string name="choose_due_date">choose due date</string>
+    <string name="due_date">Due Date :</string>
+    <string name="choose_start_date">choose start date</string>
+    <string name="start_date">Start Date :</string>
+    <string name="enter_project_description">enter project description</string>
+    <string name="project_description">Project Description :</string>
+    <string name="enter_project_name">Enter Project Name</string>
+    <string name="project_name">Project Name:</string>
+
+    <string-array name="user_types">
+        <item>manager</item>
+        <item>employee</item>
+    </string-array>
+
     <string-array name="role_filters">
         <item>All Roles</item>
         <item>Developer</item>
@@ -37,4 +53,5 @@
         <item>Emails Only</item>
         <item>Show Archived Emails</item>
     </string-array>
+
 </resources>

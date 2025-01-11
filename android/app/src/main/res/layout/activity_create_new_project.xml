@@ -1,0 +1,150 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/theme"
+        android:backgroundTint="@color/theme"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+
+    <TextView
+            android:id="@+id/projectNameLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="26dp"
+            android:text="Project Name:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/projectName"
+            app:layout_constraintStart_toStartOf="@+id/projectName"
+            app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+
+    <EditText
+            android:id="@+id/projectName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="33dp"
+            android:hint="Enter Project Name"
+            android:inputType="text"
+            app:layout_constraintBottom_toTopOf="@+id/projectDescriptionLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/projectDescription"
+            app:layout_constraintTop_toBottomOf="@+id/projectNameLabel" />
+
+    <TextView
+            android:id="@+id/projectDescriptionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="Project Description :"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/projectDescription"
+            app:layout_constraintStart_toStartOf="@+id/projectDescription"
+            app:layout_constraintTop_toBottomOf="@+id/projectName" />
+
+    <EditText
+            android:id="@+id/projectDescription"
+            android:layout_width="344dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="15dp"
+            android:hint="enter project description"
+            android:inputType="textMultiLine"
+            android:lines="4"
+            app:layout_constraintBottom_toTopOf="@+id/projectStartDateLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.457"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/projectDescriptionLabel" />
+
+    <TextView
+            android:id="@+id/projectStartDateLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginBottom="9dp"
+            android:text="Start Date :"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/projectStartDate"
+            app:layout_constraintStart_toStartOf="@+id/projectStartDate"
+            app:layout_constraintTop_toBottomOf="@+id/projectDescription" />
+
+    <EditText
+            android:id="@+id/projectStartDate"
+            android:layout_width="347dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="choose start date"
+            android:inputType="date"
+            app:layout_constraintBottom_toTopOf="@+id/projectDueDateLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/projectStartDateLabel" />
+
+    <TextView
+            android:id="@+id/projectDueDateLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="3dp"
+            android:text="Due Date :"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/projectDueDate"
+            app:layout_constraintStart_toStartOf="@+id/projectDueDate"
+            app:layout_constraintTop_toBottomOf="@+id/projectStartDate" />
+
+    <EditText
+            android:id="@+id/projectDueDate"
+            android:layout_width="347dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:hint="choose due date"
+            android:inputType="date"
+            app:layout_constraintBottom_toTopOf="@+id/btnsave"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/projectDueDateLabel" />
+
+    <Button
+            android:id="@+id/btnsave"
+            android:layout_width="118dp"
+            android:layout_height="49dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="104dp"
+            android:layout_marginBottom="68dp"
+            android:backgroundTint="@color/cards_background"
+            android:text="Save"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/projectDueDate"
+            app:layout_constraintTop_toBottomOf="@+id/projectDueDate" />
+
+    <TextView
+            android:id="@+id/textView6"
+            android:layout_width="240dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="55dp"
+            android:layout_marginTop="56dp"
+            android:layout_marginEnd="54dp"
+            android:layout_marginBottom="55dp"
+            android:background="@color/cards_background"
+            android:backgroundTint="@color/cards_background"
+            android:text="      Create New Project"
+            android:textColor="@color/font_color"
+            android:textColorLink="@color/font_color"
+            android:textSize="20sp"
+            android:textStyle="bold|italic"
+            app:layout_constraintBottom_toTopOf="@+id/projectNameLabel"
+            app:layout_constraintEnd_toEndOf="@+id/projectName"
+            app:layout_constraintStart_toStartOf="@+id/projectNameLabel"
+            app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,11 +12,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
    $db = new Database();
    $conn = $db->connect();
 
-   // First verify both users are in the project
-   $verify_sql = "SELECT COUNT(*) as count FROM project_members 
-                  WHERE project_id = ? AND user_id IN (?, ?)";
+   // First verify sender and receiver exist in the project
+   $verify_sql = "WITH project_users AS (
+        SELECT manager_id as user_id FROM manager_projects WHERE project_id = ?
+        UNION
+        SELECT employee_id as user_id FROM employee_projects WHERE project_id = ?
+    )
+    SELECT COUNT(*) as count 
+    FROM project_users 
+    WHERE user_id IN (?, ?)";
+    
    $stmt = $conn->prepare($verify_sql);
-   $stmt->bind_param("sss", $project_id, $sender_id, $receiver_id);
+   $stmt->bind_param("ssss", $project_id, $project_id, $sender_id, $receiver_id);
    $stmt->execute();
    $result = $stmt->get_result();
    $count = $result->fetch_assoc()['count'];

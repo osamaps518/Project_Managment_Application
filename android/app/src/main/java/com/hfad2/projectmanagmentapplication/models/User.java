@@ -12,6 +12,7 @@ public class User {
     private String fullName;
     private String profileImage;
     private Date lastLogin;
+    private String userType;
     private boolean isActive;
 
     // Constructor with essential fields
@@ -111,5 +112,9 @@ public class User {
     @Override
     public String toString() {
         return this.getFullName() + " (" + this.getEmail() + ")";
+    }
+
+    public String getUserType() {
+        return userType;
     }
 }

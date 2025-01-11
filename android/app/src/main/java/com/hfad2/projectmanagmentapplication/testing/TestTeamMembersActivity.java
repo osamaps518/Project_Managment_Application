@@ -62,4 +62,21 @@ public class TestTeamMembersActivity extends AppCompatActivity {
 //        startActivity(intent);
 //        finish();
 //    }
+
+
+
+    // TODO: this is the code for launching the ProgressTrackingActivity to view all tasks for a project manager
+    // For all tasks view (from navigation)
+    //Intent intent = new Intent(context, ProgressTrackingActivity.class);
+    //intent.putExtra(APIConfig.PARAM_MANAGER_ID, managerId);
+    //intent.putExtra(EXTRA_VIEW_MODE, VIEW_MODE_ALL_TASKS);
+    //startActivity(intent);
+
+    // TODO: this is the code for launching the ProgressTrackingActivity to view all tasks for a specific project
+    //Intent intent = new Intent(context, ProgressTrackingActivity.class);
+    //intent.putExtra(APIConfig.PARAM_MANAGER_ID, managerId);
+    //intent.putExtra(APIConfig.PARAM_PROJECT_ID, projectId);
+    //intent.putExtra(EXTRA_VIEW_MODE, VIEW_MODE_PROJECT_TASKS);
+    //intent.putExtra("project_name", projectName);  // Optional, for toolbar title
+    //startActivity(intent);
 }

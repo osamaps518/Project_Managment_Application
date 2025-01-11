@@ -273,17 +273,27 @@ public class VolleyTeamMembersRepository implements TeamMembersRepository {
      * @return Employee instance populated with JSON data
      * @throws JSONException if required fields are missing
      */
+    // TODO: The username is now passed twice because email no loner exists
     private Employee parseEmployeeFromJson(JSONObject obj) throws JSONException {
         User user = new User(
                 obj.getString("user_id"),
-                obj.getString("email"),
+                obj.getString("username"),
                 obj.getString("full_name"),
                 obj.getString("username"),
-                obj.getString("profile_image")
+                "default_profile"
         );
 
-        String role = obj.getString("role");
-        return new Employee(user, role);
+        // Role now comes from employees table
+        String role = obj.has("role") ? obj.getString("role") : "Employee";
+
+        Employee employee = new Employee(user, role);
+
+        // Add status if available
+        if (obj.has("status")) {
+            employee.setStatus(obj.getString("status"));
+        }
+
+        return employee;
     }
 
     /**

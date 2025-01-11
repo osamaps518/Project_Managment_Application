@@ -1,5 +1,6 @@
 package com.hfad2.projectmanagmentapplication.config;
 
+
 /**
  * Configuration constants for API endpoints and request parameters.
  * Contains base URL, endpoint paths, and standard parameter keys for the project management API.
@@ -12,13 +13,13 @@ public class APIConfig {
 //    public static final String BASE_URL = "http://192.168.122.255/project_management/";
 
     // Request parameters for team members
-    public static final String PARAM_PROJECT_MANAGER_ID = "project_manager_id";
+    public static final String PARAM_MANAGER_ID = "manager_id";
     public static final String PARAM_PROJECT_ID = "project_id";
     public static final String PARAM_EMPLOYEE_ID = "employee_id";
     public static final String PARAM_QUERY = "query";
     public static final String PARAM_ROLE = "role";
 
-    // Request parameters for tasks
+    // Request parameters for tasks and projects
     public static final String PARAM_TASK_ID = "task_id";
     public static final String PARAM_TITLE = "title";
     public static final String PARAM_DESCRIPTION = "description";
@@ -39,7 +40,35 @@ public class APIConfig {
     public static final String PARAM_SHOW_ARCHIVED = "show_archived";
     public static final String PARAM_TYPE = "type";
 
+    // Login parameters
+    public static final String PARAM_USERNAME = "Name";
+    public static final String PARAM_PASSWORD = "password";
+    public static final String PARAM_USER_TYPE = "type";
+
+    // add project parameters and response key
+//    public static final String PARAM_MANAGER_ID = "manager_id";
+    public static final String RESPONSE_USER_ID = "user_id";
+
+    // Response keys for login
+    public static final String RESPONSE_STATUS = "status2";
+    public static final String RESPONSE_TYPE = "type";
+    public static final String STATUS_SUCCESS = "success";
+    public static final String USER_TYPE_MANAGER = "manager";
+    public static final String USER_TYPE_EMPLOYEE = "employee";
+
+    // Register endpoint response keys
+    public static final String RESPONSE_SUCCESS = "success";
+    public static final String RESPONSE_MESSAGE = "message";
+
     /** API endpoint paths */
+    // Login and registration endpoints
+    public static final String LOGIN = BASE_URL + "authentication/login.php";
+    public static final String REGISTER = BASE_URL + "authentication/register.php";
+
+    // Project management endpoints
+    public static final String GET_PROJECTS = BASE_URL + "projects/get_projects.php";
+    public static final String ADD_PROJECT = BASE_URL + "projects/add_project.php";
+
     // Team member endpoints
     public static final String GET_MEMBERS = BASE_URL + "team_members/get_members.php";
     public static final String ADD_MEMBER = BASE_URL + "team_members/add_member.php";
@@ -79,4 +108,5 @@ public class APIConfig {
     public static final String ERROR_NETWORK = "Network error occurred";
     public static final String ERROR_TIMEOUT = "Request timed out";
     public static final String ERROR_PARSE = "Error parsing server response";
+    public static final String PARAM_ASSIGNED_TO = "assigned_to";
 }

@@ -1,5 +1,5 @@
 <?php
-require_once 'database.php';
+require_once '../config/database.php';
 
 if($_SERVER['REQUEST_METHOD'] == "POST") {
     $task_id = isset($_POST['task_id']) ? $_POST['task_id'] : "";

@@ -7,9 +7,17 @@ if(isset($_GET['notification_id'])) {
     $db = new Database();
     $conn = $db->connect();
     
-    $sql = "SELECT n.*, u.full_name as sender_name 
+    // Updated query to include user type and role information
+    $sql = "SELECT n.*, 
+            sender.full_name as sender_name,
+            sender.user_type as sender_type,
+            CASE 
+                WHEN sender.user_type = 'MANAGER' THEN 'Project Manager'
+                ELSE e.role 
+            END as sender_role
             FROM notifications n 
-            LEFT JOIN users u ON n.sender_id = u.user_id 
+            JOIN users sender ON n.sender_id = sender.user_id 
+            LEFT JOIN employees e ON sender.user_id = e.user_id
             WHERE n.notification_id = ? AND n.type = 'EMAIL'";
             
     $stmt = $conn->prepare($sql);

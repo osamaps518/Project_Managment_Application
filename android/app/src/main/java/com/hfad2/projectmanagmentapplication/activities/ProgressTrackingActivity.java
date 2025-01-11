@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
@@ -18,7 +17,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,18 +25,19 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hfad2.projectmanagmentapplication.R;
+import com.hfad2.projectmanagmentapplication.activities.manager.AddTaskActivity;
+import com.hfad2.projectmanagmentapplication.config.APIConfig;
 import com.hfad2.projectmanagmentapplication.models.CardData;
 import com.hfad2.projectmanagmentapplication.models.Task;
 import com.hfad2.projectmanagmentapplication.models.TaskComment;
-import com.hfad2.projectmanagmentapplication.models.TaskPriority;
 import com.hfad2.projectmanagmentapplication.models.TaskStatus;
 import com.hfad2.projectmanagmentapplication.repositories.OperationCallback;
 import com.hfad2.projectmanagmentapplication.repositories.ProgressTrackingRepository;
 import com.hfad2.projectmanagmentapplication.repositories.VolleyProgressTrackingRepository;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -66,9 +65,16 @@ public class ProgressTrackingActivity extends AppCompatActivity {
     private CardAdapter adapter;
     private List<CardData> taskCards;
     private String projectManagerId;
+    private String projectId;
+    private int viewMode;
     private SearchView searchView;
     private boolean isSearchActive = false;
     private Spinner statusFilterSpinner;
+
+    // Decide which activity have opened this activity (from navigation or from project card) to show the appropriate tasks
+    public static final String EXTRA_VIEW_MODE = "view_mode";
+    public static final int VIEW_MODE_ALL_TASKS = 1;  // Opened from navigation
+    public static final int VIEW_MODE_PROJECT_TASKS = 2;  // Opened from project card
 
     // TODO: Make sure that you actually need the projectId, otherwise remove it
     @Override
@@ -77,12 +83,28 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         Log.d("ProgressTrackingActivity", "onCreate started");
         setContentView(R.layout.activity_track_progress);
 
+
         try {
-            projectManagerId = getIntent().getStringExtra("project_manager_id");
+            viewMode = getIntent().getIntExtra(EXTRA_VIEW_MODE, VIEW_MODE_ALL_TASKS);
+            projectManagerId = getIntent().getStringExtra(APIConfig.PARAM_MANAGER_ID);
+            // Always need manager ID for authorization
+            projectManagerId = getIntent().getStringExtra(APIConfig.PARAM_MANAGER_ID);
             if (projectManagerId == null) {
+                Toast.makeText(this, "Manager ID required", Toast.LENGTH_SHORT).show();
                 finish();
                 return;
             }
+
+            // Only get project ID if we're in project-specific mode
+            if (viewMode == VIEW_MODE_PROJECT_TASKS) {
+                projectId = getIntent().getStringExtra(APIConfig.PARAM_PROJECT_ID);
+                if (projectId == null) {
+                    Toast.makeText(this, "Project ID required for project view", Toast.LENGTH_SHORT).show();
+                    finish();
+                    return;
+                }
+            }
+
             initialize();
             setupRecyclerView();
             loadTasks();
@@ -130,7 +152,15 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         // Hidden by default until filter button is clicked
         statusFilterSpinner.setVisibility(View.GONE);
 
-        fabAdd.setOnClickListener(v -> showAddTaskDialog());
+        fabAdd.setOnClickListener(v -> {
+            Intent intent = new Intent(this, AddTaskActivity.class);
+            intent.putExtra(APIConfig.PARAM_MANAGER_ID, projectManagerId);
+            intent.putExtra(EXTRA_VIEW_MODE, viewMode);
+            if (viewMode == VIEW_MODE_PROJECT_TASKS) {
+                intent.putExtra(APIConfig.PARAM_PROJECT_ID, projectId);
+            }
+            startActivity(intent);
+        });
     }
 
     /**
@@ -169,18 +199,16 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         repository.getAllTasks(projectManagerId, new OperationCallback<List<Task>>() {
             @Override
             public void onSuccess(List<Task> tasks) {
-                taskCards.clear();
-                for (Task task : tasks) {
-                    CardData card = new CardData();
-                    card.setLine1(task.getTitle());
-                    card.setLine2(task.getAssignedEmployee().getFullName());
-                    Log.d("Name of the employee:","Name:" + task.getAssignedEmployee().getUserName());
-                    card.setLine3(task.getProject().getTitle());
-                    card.setImage(getStatusIcon(task.getStatus()));
-                    card.setData(task);
-                    taskCards.add(card);
+                if (viewMode == VIEW_MODE_PROJECT_TASKS) {
+                    // Filter tasks for specific project
+                    List<Task> projectTasks = tasks.stream()
+                            .filter(task -> task.getProjectId().equals(projectId))
+                            .collect(Collectors.toList());
+                    updateTaskList(projectTasks);
+                } else {
+                    // Show all tasks
+                    updateTaskList(tasks);
                 }
-                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -192,6 +220,20 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         });
     }
 
+    public void updateTaskList(List<Task> tasks){
+        taskCards.clear();
+        for (Task task : tasks) {
+            CardData card = new CardData();
+            card.setLine1(task.getTitle());
+            card.setLine2(task.getAssignedEmployee().getFullName());
+            Log.d("Name of the employee:","Name:" + task.getAssignedEmployee().getUserName());
+            card.setLine3(task.getProject().getTitle());
+            card.setImage(getStatusIcon(task.getStatus()));
+            card.setData(task);
+            taskCards.add(card);
+        }
+        adapter.notifyDataSetChanged();
+    }
     /**
      * Returns appropriate drawable resource based on task status.
      *
@@ -476,50 +518,5 @@ public class ProgressTrackingActivity extends AppCompatActivity {
                         "Filter failed: " + error, Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    //TODO:This method requires projectId, it'll be removed if not needed, currently, it takes a dummy projectId
-    /**
-     * Shows dialog for adding new task.
-     * Dialog includes:
-     * - Title input
-     * - Description input
-     * - Priority selector
-     * - Due date picker
-     * Creates new task on confirmation
-     */
-    private void showAddTaskDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_task, null);
-
-        EditText titleInput = dialogView.findViewById(R.id.task_title_input);
-        EditText descriptionInput = dialogView.findViewById(R.id.task_description_input);
-        Spinner prioritySpinner = dialogView.findViewById(R.id.priority_spinner);
-        DatePicker dueDatePicker = dialogView.findViewById(R.id.due_date_picker);
-
-        ArrayAdapter<TaskPriority> priorityAdapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_item, TaskPriority.values());
-        priorityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        prioritySpinner.setAdapter(priorityAdapter);
-
-        builder.setView(dialogView)
-                .setTitle("Add New Task")
-                .setPositiveButton("Add", (dialog, which) -> {
-                    String title = titleInput.getText().toString();
-                    String description = descriptionInput.getText().toString();
-                    TaskPriority priority = (TaskPriority) prioritySpinner.getSelectedItem();
-
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.set(dueDatePicker.getYear(),
-                            dueDatePicker.getMonth(),
-                            dueDatePicker.getDayOfMonth());
-
-                    String projectId = "";
-                    Task newTask = repository.createTask(projectId, title, description,
-                            priority, calendar.getTime());
-                    loadTasks();
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
     }
 }

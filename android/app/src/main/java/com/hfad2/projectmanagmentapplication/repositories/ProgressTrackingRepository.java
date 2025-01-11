@@ -18,6 +18,7 @@ public interface ProgressTrackingRepository {
 
     void removeTask(String taskId, OperationCallback<Boolean> callback);
 
-    Task createTask(String projectId, String title, String description, TaskPriority priority,
-                    Date dueDate);
+    void createTask(String projectId, String title, String description,
+                           TaskPriority priority, Date dueDate, String assignedTo,
+                           OperationCallback<Boolean> callback);
 }

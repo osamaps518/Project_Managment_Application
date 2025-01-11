@@ -121,4 +121,8 @@ public class Employee {
     public String getProfileImage() {
         return user.getProfileImage();
     }
+
+    public void setStatus(String status) {
+       this.status = EmployeeStatus.valueOf(status);
+    }
 }
