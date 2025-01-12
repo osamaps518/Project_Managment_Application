@@ -70,6 +70,11 @@ public class APIConfig {
     public static final String ADD_PROJECT = BASE_URL + "projects/add_project.php";
     public static final String DELETE_PROJECT = BASE_URL + "projects/delete_project.php";
 
+    // Task management endpoints
+    public static final String GET_TASK_DETAILS = BASE_URL + "tasks/get_task_details.php";
+    public static final String UPDATE_TASK_STATUS = BASE_URL + "tasks/update_task_status.php";
+
+
     // Team member endpoints
     public static final String GET_MEMBERS = BASE_URL + "team_members/get_members.php";
     public static final String ADD_MEMBER = BASE_URL + "team_members/add_member.php";

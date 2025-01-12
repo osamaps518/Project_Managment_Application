@@ -158,13 +158,14 @@ public class NotificationActivity extends AppCompatActivity {
         // Handle card clicks based on notification type
         adapter.setOnItemClickListener(item -> {
             Notification notification = (Notification) item.getData();
-            if (notification.getType() == NotificationType.COMMENT) {
-                // Open task details with comments
-                openTaskComments(notification);
-            } else {
-                // Open email in full screen
-                openEmail(notification);
-            }
+            openEmail(notification);
+//            if (notification.getType() == NotificationType.COMMENT) {
+//                // Open task details with comments
+//                openTaskComments(notification);
+//            } else {
+//                // Open email in full screen
+//                openEmail(notification);
+//            }
         });
 
         adapter.setOnMoreClickListener((item, view) -> showPopupMenu(view, item));

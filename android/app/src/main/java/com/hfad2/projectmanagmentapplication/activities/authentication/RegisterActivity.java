@@ -1,8 +1,11 @@
 package com.hfad2.projectmanagmentapplication.activities.authentication;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.Request;
@@ -14,9 +17,11 @@ import com.hfad2.projectmanagmentapplication.config.APIConfig;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 public class RegisterActivity extends AppCompatActivity {
     private EditText etName, etPassword, etConfirmPassword;
-    private Spinner spinnerUserType;
+    private Spinner spinnerUserType, spinnerRole;
+    private TextView tvRole;
     private Button btnRegister;
     private RequestQueue requestQueue;
 
@@ -25,13 +30,38 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        initializeViews();
+        setupUserTypeSpinner();
+        setupRegisterButton();
+    }
+
+    private void initializeViews() {
         etName = findViewById(R.id.edtname);
         etPassword = findViewById(R.id.edtPassword);
         etConfirmPassword = findViewById(R.id.edtPassword2);
         spinnerUserType = findViewById(R.id.spnType);
+        spinnerRole = findViewById(R.id.spnRole);
+        tvRole = findViewById(R.id.textView6);
         btnRegister = findViewById(R.id.btnRegister);
-
         requestQueue = Volley.newRequestQueue(this);
+    }
+
+    private void setupUserTypeSpinner() {
+        spinnerUserType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedType = parent.getItemAtPosition(position).toString().toLowerCase();
+                boolean isEmployee = selectedType.equals("employee");
+                tvRole.setVisibility(isEmployee ? View.VISIBLE : View.GONE);
+                spinnerRole.setVisibility(isEmployee ? View.VISIBLE : View.GONE);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+    }
+
+    private void setupRegisterButton() {
         btnRegister.setOnClickListener(v -> registerUser());
     }
 
@@ -39,7 +69,9 @@ public class RegisterActivity extends AppCompatActivity {
         String name = etName.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
         String confirmPassword = etConfirmPassword.getText().toString().trim();
-        String userType = spinnerUserType.getSelectedItem().toString();
+        String userType = spinnerUserType.getSelectedItem().toString().toLowerCase();
+        String role = userType.equals("employee") ?
+                spinnerRole.getSelectedItem().toString() : "";
 
         if (name.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
@@ -51,11 +83,19 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
+        if (userType.equals("employee") && role.equals("All Roles")) {
+            Toast.makeText(this, "Please select a specific role", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         JSONObject params = new JSONObject();
         try {
             params.put(APIConfig.PARAM_USERNAME, name);
             params.put(APIConfig.PARAM_PASSWORD, password);
             params.put(APIConfig.PARAM_USER_TYPE, userType);
+            if (userType.equals("employee")) {
+                params.put(APIConfig.PARAM_ROLE, role);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

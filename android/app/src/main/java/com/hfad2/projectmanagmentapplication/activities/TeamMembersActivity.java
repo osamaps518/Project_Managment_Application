@@ -173,7 +173,6 @@ public class TeamMembersActivity extends AppCompatActivity {
             public void onSuccess(List<Employee> employees) {
                 memberCards.clear();
                 for (Employee employee : employees) {
-                    // TODO: Add profile image URL
                     CardData card = new CardData();
                     card.setLine1(employee.getUserName());
                     card.setLine2(employee.getRole());
@@ -196,8 +195,6 @@ public class TeamMembersActivity extends AppCompatActivity {
         });
     }
 
-    // TODO: Adjust profile image handling when backend supports image URLs
-    // TODO: Use Glide for image loading
     /**
      * Returns the resource ID for the profile image based on the image name.
      * Currently uses a switch statement to map image names to drawable resources.

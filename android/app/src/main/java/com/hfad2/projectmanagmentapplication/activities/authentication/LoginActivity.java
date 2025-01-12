@@ -87,7 +87,16 @@ public class LoginActivity extends AppCompatActivity {
                                     intent.putExtra(APIConfig.PARAM_MANAGER_ID, userId);
                                     startActivity(intent);
                                 } else if (userType.equals(APIConfig.USER_TYPE_EMPLOYEE)) {
+                                    String userId = jsonResponse.getString(APIConfig.RESPONSE_USER_ID);
+                                    // Initialize session for employee too
+                                    SessionManager.initializeSession(
+                                            LoginActivity.this,
+                                            userId,      // from login response
+                                            userType,    // "MANAGER" or "EMPLOYEE"
+                                            username     // from login response
+                                    );
                                     Intent intent = new Intent(LoginActivity.this, EmployeeDashboardActivity.class);
+                                    intent.putExtra(APIConfig.PARAM_EMPLOYEE_ID, userId);  // Add the employee ID
                                     startActivity(intent);
                                 }
                             } else {

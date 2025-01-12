@@ -73,17 +73,42 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/edtPassword" />
 
+
+    <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="27dp"
+            android:layout_marginTop="24dp"
+            android:text="Role:"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <Spinner
+            android:id="@+id/spnRole"
+            android:layout_width="0dp"
+            android:layout_height="41dp"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="65dp"
+            android:entries="@array/role_filters"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView6"
+            app:layout_constraintTop_toTopOf="@+id/textView6" />
+
     <Button
             android:id="@+id/btnRegister"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="25dp"
-            android:textColor="@color/font_color"
             android:layout_marginTop="36dp"
             android:backgroundTint="@color/cards_background"
             android:text="Register"
-            app:layout_constraintStart_toStartOf="@+id/spnType"
-            app:layout_constraintTop_toBottomOf="@+id/textView5" />
+            android:textColor="@color/font_color"
+            app:layout_constraintStart_toStartOf="@+id/spnRole"
+            app:layout_constraintTop_toBottomOf="@+id/spnRole" />
 
     <EditText
             android:id="@+id/edtPassword"

@@ -229,7 +229,7 @@ public class AddTaskActivity extends AppCompatActivity {
             return;
         }
 
-               taskRepository.createTask(projectId, title, description, priority,
+        taskRepository.createTask(projectId, title, description, priority,
                 calendar.getTime(), selectedUser.getUserId(),
                 new OperationCallback<Boolean>() {
                     @Override

@@ -1,22 +1,22 @@
 package com.hfad2.projectmanagmentapplication.activities;
 
 import android.content.Context;
-import android.view.LayoutInflater;
+import android.os.Bundle;import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.AdapterView;import android.widget.ArrayAdapter;import android.widget.DatePicker;import android.widget.Spinner;import android.widget.TextView;import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.app.AppCompatActivity;import androidx.recyclerview.widget.RecyclerView;
 
-import com.hfad2.projectmanagmentapplication.R;
-import com.hfad2.projectmanagmentapplication.models.Notification;
-import com.hfad2.projectmanagmentapplication.utils.DateUtils;
+import com.google.android.material.textfield.TextInputEditText;import com.hfad2.projectmanagmentapplication.R;
+import com.hfad2.projectmanagmentapplication.activities.manager.AddTaskActivity;import com.hfad2.projectmanagmentapplication.config.APIConfig;import com.hfad2.projectmanagmentapplication.models.Notification;
+import com.hfad2.projectmanagmentapplication.models.Project;import com.hfad2.projectmanagmentapplication.models.TaskPriority;import com.hfad2.projectmanagmentapplication.models.User;import com.hfad2.projectmanagmentapplication.repositories.MessageRepository;import com.hfad2.projectmanagmentapplication.repositories.OperationCallback;import com.hfad2.projectmanagmentapplication.repositories.ProgressTrackingRepository;import com.hfad2.projectmanagmentapplication.repositories.VolleyMessageRepository;import com.hfad2.projectmanagmentapplication.repositories.VolleyProgressTrackingRepository;import com.hfad2.projectmanagmentapplication.utils.DateUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.Calendar;import java.util.Date;
+import java.util.List;import java.util.stream.Collectors;
 // Modified CommentAdapter.java to match existing XML layout
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
     private final Context context;
