@@ -22,19 +22,19 @@
                 android:name=".activities.employee.EmployeeDashboardActivity"
                 android:exported="false" />
         <activity
-                android:name=".activities.manager.CreateNewProject"
+                android:name=".project_members.muna.CreateNewProject"
                 android:exported="false" />
         <activity
-                android:name=".activities.manager.ProjectAdapter"
+                android:name=".project_members.muna.ProjectAdapter"
                 android:exported="false" />
         <activity
-                android:name=".activities.manager.ManagerDashboardActivity"
+                android:name=".project_members.muna.ManagerDashboardActivity"
                 android:exported="false" />
         <activity
-                android:name=".activities.authentication.RegisterActivity"
+                android:name=".project_members.muna.RegisterActivity"
                 android:exported="false" />
         <activity
-                android:name=".activities.authentication.LoginActivity"
+                android:name=".project_members.muna.LoginActivity"
                 android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
