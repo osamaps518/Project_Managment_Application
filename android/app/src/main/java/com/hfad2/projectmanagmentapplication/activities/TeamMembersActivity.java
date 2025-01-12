@@ -440,57 +440,175 @@ public class TeamMembersActivity extends AppCompatActivity {
             }
         });
     }
+//
+//    private void showAddMemberDialog() {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_member, null);
+//
+//        EditText userIdInput = dialogView.findViewById(R.id.user_id_input);
+//        Button searchButton = dialogView.findViewById(R.id.btn_search_user);
+//        TextView userInfoView = dialogView.findViewById(R.id.user_info);
+//
+//        final Employee[] selectedEmployee = new Employee[1];
+//
+//        searchButton.setOnClickListener(v -> {
+//            String userId = userIdInput.getText().toString();
+//            repository.findEmployee(userId, new OperationCallback<Employee>() {
+//                @Override
+//                public void onSuccess(Employee employee) {
+//                    selectedEmployee[0] = employee;
+//                    userInfoView.setText("Found: " + employee.getFullName());
+//                    userInfoView.setVisibility(View.VISIBLE);
+//                }
+//
+//                @Override
+//                public void onError(String error) {
+//                    userInfoView.setText("User not found");
+//                    userInfoView.setVisibility(View.VISIBLE);
+//                    selectedEmployee[0] = null;
+//                }
+//            });
+//        });
+//
+//        builder.setView(dialogView)
+//                .setTitle("Add Team Member")
+//                .setPositiveButton("Add", (dialog, which) -> {
+//                    if (selectedEmployee[0] != null) {
+//                        repository.addMember(projectId, selectedEmployee[0].getUserId(),
+//                                new OperationCallback<Boolean>() {
+//                                    @Override
+//                                    public void onSuccess(Boolean result) {
+//                                        loadTeamMembers();
+//                                    }
+//
+//                                    @Override
+//                                    public void onError(String error) {
+//                                        Toast.makeText(TeamMembersActivity.this,
+//                                                "Failed to add member: " + error,
+//                                                Toast.LENGTH_SHORT).show();
+//                                    }
+//                                });
+//                    }
+//                })
+//                .setNegativeButton("Cancel", null)
+//                .show();
+//    }
 
     private void showAddMemberDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_member, null);
 
-        EditText userIdInput = dialogView.findViewById(R.id.user_id_input);
-        Button searchButton = dialogView.findViewById(R.id.btn_search_user);
+
+        SearchView searchView = dialogView.findViewById(R.id.search_view);
+        Spinner userSpinner = dialogView.findViewById(R.id.user_spinner);
         TextView userInfoView = dialogView.findViewById(R.id.user_info);
 
+        // This will hold our currently selected employee
         final Employee[] selectedEmployee = new Employee[1];
+        searchAvailableUsers("", userSpinner, userInfoView);
 
-        searchButton.setOnClickListener(v -> {
-            String userId = userIdInput.getText().toString();
-            repository.findEmployee(userId, new OperationCallback<Employee>() {
-                @Override
-                public void onSuccess(Employee employee) {
-                    selectedEmployee[0] = employee;
-                    userInfoView.setText("Found: " + employee.getFullName());
-                    userInfoView.setVisibility(View.VISIBLE);
-                }
 
-                @Override
-                public void onError(String error) {
-                    userInfoView.setText("User not found");
-                    userInfoView.setVisibility(View.VISIBLE);
-                    selectedEmployee[0] = null;
+        // Configure the SearchView
+        searchView.setQueryHint("Type to search users...");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchAvailableUsers(query, userSpinner, userInfoView);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText.length() >= 2) { // Start search after 2 characters
+                    searchAvailableUsers(newText, userSpinner, userInfoView);
                 }
-            });
+                return true;
+            }
         });
 
+        // Handle spinner selection
+        userSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedEmployee[0] = (Employee) parent.getItemAtPosition(position);
+                userInfoView.setText("Selected: " + selectedEmployee[0].getFullName());
+                userInfoView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                selectedEmployee[0] = null;
+                userInfoView.setVisibility(View.GONE);
+            }
+        });
+
+        // Create and show the dialog
         builder.setView(dialogView)
                 .setTitle("Add Team Member")
                 .setPositiveButton("Add", (dialog, which) -> {
                     if (selectedEmployee[0] != null) {
-                        repository.addMember(projectId, selectedEmployee[0].getUserId(),
-                                new OperationCallback<Boolean>() {
-                                    @Override
-                                    public void onSuccess(Boolean result) {
-                                        loadTeamMembers();
-                                    }
-
-                                    @Override
-                                    public void onError(String error) {
-                                        Toast.makeText(TeamMembersActivity.this,
-                                                "Failed to add member: " + error,
-                                                Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                        addMemberToProject(selectedEmployee[0]);
+                    } else {
+                        Toast.makeText(this, "Please select a user first", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
+    }
+
+    private void searchAvailableUsers(String query, Spinner spinner, TextView infoView) {
+        repository.searchAvailableUsers(projectId, query, new OperationCallback<List<Employee>>() {
+            @Override
+            public void onSuccess(List<Employee> employees) {
+                if (employees.isEmpty()) {
+                    runOnUiThread(() -> {
+                        infoView.setText("No users found");
+                        infoView.setVisibility(View.VISIBLE);
+                        spinner.setAdapter(null);
+                    });
+                    return;
+                }
+
+                ArrayAdapter<Employee> adapter = new ArrayAdapter<>(
+                        TeamMembersActivity.this,
+                        android.R.layout.simple_spinner_item,
+                        employees
+                );
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                runOnUiThread(() -> {
+                    spinner.setAdapter(adapter);
+                    infoView.setVisibility(View.GONE);
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    infoView.setText("Error: " + error);
+                    infoView.setVisibility(View.VISIBLE);
+                    spinner.setAdapter(null);
+                });
+            }
+        });
+    }
+
+    private void addMemberToProject(Employee employee) {
+        repository.addMember(projectId, employee.getUserId(),
+                new OperationCallback<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        loadTeamMembers();
+                        Toast.makeText(TeamMembersActivity.this,
+                                "Member added successfully", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Toast.makeText(TeamMembersActivity.this,
+                                "Failed to add member: " + error,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }

@@ -335,4 +335,65 @@ public class VolleyTeamMembersRepository implements TeamMembersRepository {
         }
         callback.onError(message + ": " + error.getMessage());
     }
+
+    @Override
+    public void searchAvailableUsers(String projectId, String query, OperationCallback<List<Employee>> callback) {
+        // Build the URL with query parameters
+        String url = APIConfig.SEARCH_USERS + "?"
+                + APIConfig.PARAM_PROJECT_ID + "=" + projectId
+                + "&" + APIConfig.PARAM_QUERY + "=" + Uri.encode(query);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    try {
+                        // Parse the JSON response
+                        JSONObject jsonResponse = new JSONObject(response);
+
+                        // Check for errors first
+                        if (jsonResponse.getBoolean("error")) {
+                            callback.onError(jsonResponse.getString("message"));
+                            return;
+                        }
+
+                        // Get the users array
+                        JSONArray usersArray = jsonResponse.getJSONArray("users");
+                        List<Employee> employees = new ArrayList<>();
+
+                        // Parse each user into an Employee object
+                        for (int i = 0; i < usersArray.length(); i++) {
+                            JSONObject obj = usersArray.getJSONObject(i);
+
+                            // Create User object first
+                            User user = new User(
+                                    obj.getString("user_id"),
+                                    obj.getString("username"),
+                                    obj.getString("full_name"),
+                                    obj.getString("username"),  // Using username since email was removed
+                                    "default_profile"
+                            );
+                            user.setUserType(obj.getString("user_type"));
+
+                            // Create Employee with role from employees table
+                            String role = obj.getString("role");
+                            Employee employee = new Employee(user, role);
+
+                            // Set employee status if available
+                            if (obj.has("status")) {
+                                employee.setStatus(obj.getString("status"));
+                            }
+
+                            employees.add(employee);
+                        }
+
+                        callback.onSuccess(employees);
+
+                    } catch (JSONException e) {
+                        callback.onError(APIConfig.ERROR_PARSE + ": " + e.getMessage());
+                    }
+                },
+                error -> handleVolleyError(error, callback));
+
+        // Add the request to the RequestQueue
+        queue.add(stringRequest);
+    }
 }

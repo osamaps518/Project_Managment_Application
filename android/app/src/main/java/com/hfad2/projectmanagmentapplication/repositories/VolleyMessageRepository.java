@@ -237,10 +237,13 @@ public class VolleyMessageRepository implements MessageRepository {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject obj = jsonArray.getJSONObject(i);
                 User user = new User(
-                        obj.getString("email"),
-                        obj.getString("full_name")
+                        obj.getString("user_id"),
+                        obj.getString("username"),
+                        obj.getString("full_name"),
+                        obj.getString("username"), // Using username instead of email
+                        "default_profile"
                 );
-                user.setUserId(obj.getString("user_id"));
+                user.setUserType(obj.getString("user_type"));
                 users.add(user);
             }
 

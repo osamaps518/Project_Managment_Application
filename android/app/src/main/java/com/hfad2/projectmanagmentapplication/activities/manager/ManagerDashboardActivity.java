@@ -3,6 +3,7 @@ package com.hfad2.projectmanagmentapplication.activities.manager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,6 +14,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hfad2.projectmanagmentapplication.R;
 import com.hfad2.projectmanagmentapplication.activities.ProgressTrackingActivity;
+import com.hfad2.projectmanagmentapplication.activities.TeamMembersActivity;
 import com.hfad2.projectmanagmentapplication.config.APIConfig;
 import com.hfad2.projectmanagmentapplication.models.Project;
 
@@ -28,6 +30,7 @@ public class ManagerDashboardActivity extends AppCompatActivity {
     private ProjectAdapter projectAdapter;
     private List<Project> projectList;
     private String managerId;
+    private Button btnAddMember;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,12 @@ public class ManagerDashboardActivity extends AppCompatActivity {
             intent.putExtra(APIConfig.PARAM_PROJECT_ID, projectList.get(position).getProjectId());
             intent.putExtra(ProgressTrackingActivity.EXTRA_VIEW_MODE, ProgressTrackingActivity.VIEW_MODE_PROJECT_TASKS);
             intent.putExtra("project_name", projectList.get(position).getTitle());
+            startActivity(intent);
+        });
+
+        projectAdapter.setOnAddMemberClickListener(project -> {
+            Intent intent = new Intent(ManagerDashboardActivity.this, TeamMembersActivity.class);
+            intent.putExtra("project_id", project.getProjectId());
             startActivity(intent);
         });
 

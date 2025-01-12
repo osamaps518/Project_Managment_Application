@@ -149,7 +149,7 @@ public class AddTaskActivity extends AppCompatActivity {
             public void onSuccess(List<User> members) {
                 // Filter out any managers from the list - we only want to assign to employees
                 List<User> employeeMembers = members.stream()
-                        .filter(user -> !user.getUserType().equals("MANAGER"))
+                        .filter(user -> user.getUserType() != null && !user.getUserType().equals("MANAGER"))
                         .collect(Collectors.toList());
 
                 projectMembers = employeeMembers;

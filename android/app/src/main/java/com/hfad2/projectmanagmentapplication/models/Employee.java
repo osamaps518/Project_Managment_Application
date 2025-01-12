@@ -125,4 +125,9 @@ public class Employee {
     public void setStatus(String status) {
        this.status = EmployeeStatus.valueOf(status);
     }
+
+    @Override
+    public String toString() {
+        return "Employee{" + getUserName() + "," + getRole() + "}";
+    }
 }

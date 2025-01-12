@@ -35,19 +35,18 @@
                 android:exported="false" />
         <activity
                 android:name=".activities.authentication.LoginActivity"
-                android:exported="false" />
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
                 android:name=".testing.TestProgressTrackingActivity"
                 android:exported="true" />
         <activity
                 android:name=".testing.TestTeamMembersActivity"
-                android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+                android:exported="true" />
         <activity
                 android:name=".activities.BaseProjectActivity"
                 android:exported="false" />
@@ -71,9 +70,6 @@
                 android:exported="false" />
         <activity
                 android:name=".activities.ProgressTrackingActivity"
-                android:exported="false" />
-        <activity
-                android:name=".MainActivity"
                 android:exported="false" />
     </application>
 

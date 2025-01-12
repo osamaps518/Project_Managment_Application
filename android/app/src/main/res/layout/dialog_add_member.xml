@@ -5,29 +5,24 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-    <com.google.android.material.textfield.TextInputLayout
+    <androidx.appcompat.widget.SearchView
+            android:id="@+id/search_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="User ID">
+            android:layout_marginBottom="16dp"
+            android:hint="Search for users" />
 
-        <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/user_id_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <Button
-            android:id="@+id/btn_search_user"
-            android:layout_width="wrap_content"
+    <Spinner
+            android:id="@+id/user_spinner"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Search User"
-            android:layout_marginTop="8dp" />
+            android:layout_marginBottom="16dp" />
 
     <TextView
             android:id="@+id/user_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:visibility="gone" />
 
 </LinearLayout>

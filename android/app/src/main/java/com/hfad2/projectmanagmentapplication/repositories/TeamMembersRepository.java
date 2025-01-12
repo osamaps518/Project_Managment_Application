@@ -20,6 +20,8 @@ public interface TeamMembersRepository {
 
     void getAssignedTask(String projectId, String employeeId, OperationCallback<Task> callback);
 
+    void searchAvailableUsers(String projectId, String query, OperationCallback<List<Employee>> callback);
+
     void findEmployee(String userId, OperationCallback<Employee> callback);
 }
 

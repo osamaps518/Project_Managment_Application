@@ -8,17 +8,17 @@ if(isset($_GET['project_id'])) {
     $conn = $db->connect();
     
     // Get both managers and employees with their respective roles
-    $sql = "SELECT u.*, 'MANAGER' as role, NULL as employee_status 
-            FROM users u 
-            JOIN manager_projects mp ON u.user_id = mp.manager_id 
-            WHERE mp.project_id = ?
-            UNION 
-            SELECT u.*, e.role, e.status as employee_status
-            FROM users u 
-            JOIN employee_projects ep ON u.user_id = ep.employee_id 
-            JOIN employees e ON u.user_id = e.user_id
-            WHERE ep.project_id = ?";
-            
+    $sql = "SELECT u.*, u.user_type, 'MANAGER' as role, NULL as employee_status 
+        FROM users u 
+        JOIN manager_projects mp ON u.user_id = mp.manager_id 
+        WHERE mp.project_id = ?
+        UNION 
+        SELECT u.*, u.user_type, e.role, e.status as employee_status
+        FROM users u 
+        JOIN employee_projects ep ON u.user_id = ep.employee_id 
+        JOIN employees e ON u.user_id = e.user_id
+        WHERE ep.project_id = ?";
+
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ss", $project_id, $project_id);
     $stmt->execute();

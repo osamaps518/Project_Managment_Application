@@ -478,8 +478,22 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         statusFilterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                TaskStatus selectedStatus = (TaskStatus) parent.getItemAtPosition(position);
-                filterByStatus(selectedStatus);
+                String selected = parent.getItemAtPosition(position).toString();
+                TaskStatus status;
+
+                if (selected.equalsIgnoreCase("TODO")) {
+                    status = TaskStatus.TODO;
+                } else if (selected.equalsIgnoreCase("IN PROGRESS")) {
+                    status = TaskStatus.IN_PROGRESS;
+                } else if (selected.equalsIgnoreCase("BLOCKED")) {
+                    status = TaskStatus.BLOCKED;
+                } else if (selected.equalsIgnoreCase("COMPLETED")) {
+                    status = TaskStatus.COMPLETED;
+                } else {
+                    status = TaskStatus.TODO;
+                }
+
+                filterByStatus(status);
             }
 
             @Override

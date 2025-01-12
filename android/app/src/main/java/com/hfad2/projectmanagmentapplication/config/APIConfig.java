@@ -77,6 +77,8 @@ public class APIConfig {
     public static final String FILTER_MEMBERS = BASE_URL + "team_members/filter_members.php";
     public static final String FIND_EMPLOYEE = BASE_URL + "team_members/find_employee.php";
     public static final String GET_ASSIGNED_TASK = BASE_URL + "team_members/get_assigned_task.php";
+    public static final String SEARCH_USERS = BASE_URL + "team_members/search_users.php";
+
 
     // Task management endpoints
     public static final String GET_ALL_TASKS = BASE_URL + "tasks/get_tasks.php";
