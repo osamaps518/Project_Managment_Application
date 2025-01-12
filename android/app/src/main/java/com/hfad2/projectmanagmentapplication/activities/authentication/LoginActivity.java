@@ -17,6 +17,7 @@ import com.hfad2.projectmanagmentapplication.R;
 import com.hfad2.projectmanagmentapplication.activities.employee.EmployeeDashboardActivity;
 import com.hfad2.projectmanagmentapplication.activities.manager.ManagerDashboardActivity;
 import com.hfad2.projectmanagmentapplication.config.APIConfig;
+import com.hfad2.projectmanagmentapplication.utils.SessionManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -75,8 +76,15 @@ public class LoginActivity extends AppCompatActivity {
                             if (status.equals(APIConfig.STATUS_SUCCESS)) {
                                 String userType = jsonResponse.getString(APIConfig.RESPONSE_TYPE);
                                 if (userType.equals(APIConfig.USER_TYPE_MANAGER)) {
+                                    String userId = jsonResponse.getString(APIConfig.RESPONSE_USER_ID);
+                                    SessionManager.initializeSession(
+                                            LoginActivity.this,
+                                            userId,      // from login response
+                                            userType,    // "MANAGER" or "EMPLOYEE"
+                                            username     // from login response
+                                    );
                                     Intent intent = new Intent(LoginActivity.this, ManagerDashboardActivity.class);
-                                    intent.putExtra(APIConfig.PARAM_MANAGER_ID, jsonResponse.getString(APIConfig.RESPONSE_USER_ID));
+                                    intent.putExtra(APIConfig.PARAM_MANAGER_ID, userId);
                                     startActivity(intent);
                                 } else if (userType.equals(APIConfig.USER_TYPE_EMPLOYEE)) {
                                     Intent intent = new Intent(LoginActivity.this, EmployeeDashboardActivity.class);

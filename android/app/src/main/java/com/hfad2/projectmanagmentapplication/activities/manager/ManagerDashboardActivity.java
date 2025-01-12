@@ -4,15 +4,19 @@ package com.hfad2.projectmanagmentapplication.activities.manager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 import com.hfad2.projectmanagmentapplication.R;
+import com.hfad2.projectmanagmentapplication.activities.NavigationManager;
 import com.hfad2.projectmanagmentapplication.activities.ProgressTrackingActivity;
 import com.hfad2.projectmanagmentapplication.activities.TeamMembersActivity;
 import com.hfad2.projectmanagmentapplication.config.APIConfig;
@@ -31,6 +35,12 @@ public class ManagerDashboardActivity extends AppCompatActivity {
     private List<Project> projectList;
     private String managerId;
     private Button btnAddMember;
+    private ImageButton btnMenu;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private NavigationManager navigationManager;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +77,11 @@ public class ManagerDashboardActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        btnMenu = findViewById(R.id.btn_menu);
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        navigationManager = new NavigationManager(this, drawerLayout, navigationView);
+        navigationManager.setupMenuButton(btnMenu);
         fetchProjects();
     }
 

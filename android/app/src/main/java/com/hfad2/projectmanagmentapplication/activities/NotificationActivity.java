@@ -21,10 +21,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.navigation.NavigationView;
 import com.hfad2.projectmanagmentapplication.R;
 import com.hfad2.projectmanagmentapplication.models.CardData;
 import com.hfad2.projectmanagmentapplication.models.Notification;
@@ -73,6 +75,11 @@ public class NotificationActivity extends AppCompatActivity {
     private boolean showArchived = false;
     private Spinner filterSpinner;
     private String userId;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private NavigationManager navigationManager;
+
+
 
     /**
      * Creates and initializes the activity's layout and components.
@@ -128,6 +135,11 @@ public class NotificationActivity extends AppCompatActivity {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         filterSpinner.setAdapter(spinnerAdapter);
         filterSpinner.setVisibility(View.GONE);
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        navigationManager = new NavigationManager(this, drawerLayout, navigationView);
+        navigationManager.setupMenuButton(btnMenu);
     }
 
 

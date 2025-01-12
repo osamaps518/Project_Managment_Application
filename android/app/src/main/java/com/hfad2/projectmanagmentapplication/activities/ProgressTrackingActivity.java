@@ -18,12 +18,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 import com.hfad2.projectmanagmentapplication.R;
 import com.hfad2.projectmanagmentapplication.activities.manager.AddTaskActivity;
 import com.hfad2.projectmanagmentapplication.config.APIConfig;
@@ -70,6 +72,11 @@ public class ProgressTrackingActivity extends AppCompatActivity {
     private SearchView searchView;
     private boolean isSearchActive = false;
     private Spinner statusFilterSpinner;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private NavigationManager navigationManager;
+
+
 
     // Decide which activity have opened this activity (from navigation or from project card) to show the appropriate tasks
     public static final String EXTRA_VIEW_MODE = "view_mode";
@@ -161,6 +168,11 @@ public class ProgressTrackingActivity extends AppCompatActivity {
             }
             startActivity(intent);
         });
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        navigationManager = new NavigationManager(this, drawerLayout, navigationView);
+        navigationManager.setupMenuButton(btnMenu);
     }
 
     /**
