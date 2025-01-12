@@ -34,7 +34,6 @@ public class ManagerDashboardActivity extends AppCompatActivity {
     private ProjectAdapter projectAdapter;
     private List<Project> projectList;
     private String managerId;
-    private Button btnAddMember;
     private ImageButton btnMenu;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -103,7 +102,7 @@ public class ManagerDashboardActivity extends AppCompatActivity {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
 
                             // Capture the project_id from the response
-                            String projectId = jsonObject.getString("project_id");
+                            String projectId = jsonObject.getString(APIConfig.PARAM_PROJECT_ID);
                             String title = jsonObject.getString(APIConfig.PARAM_TITLE);
                             String description = jsonObject.getString(APIConfig.PARAM_DESCRIPTION);
                             String startDate = jsonObject.getString(APIConfig.PARAM_START_DATE);

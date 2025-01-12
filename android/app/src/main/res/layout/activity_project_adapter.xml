@@ -10,98 +10,89 @@
         app:cardCornerRadius="8dp">
 
     <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="284dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="16dp">
 
-
         <androidx.constraintlayout.widget.ConstraintLayout
-
-                android:layout_width="358dp"
-                android:layout_height="249dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@color/cards_background"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="@+id/dueDateTextView"
-                app:layout_constraintTop_toBottomOf="@+id/dueDateTextView">
+                android:orientation="vertical">
 
             <TextView
                     android:id="@+id/titleTextView"
-                    android:layout_width="340dp"
-                    android:layout_height="35dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="3dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
                     android:text="Project Title"
                     android:textColor="@color/font_color"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@+id/descriptionTextView"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="MissingConstraints"
-                    tools:layout_editor_absoluteX="11dp" />
-
-            <TextView
-                    android:id="@+id/descriptionTextView"
-                    android:layout_width="350dp"
-                    android:layout_height="0dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="36dp"
-                    android:layout_marginBottom="98dp"
-                    android:text="Description"
-                    android:textColor="@color/font_color"
-                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                    android:id="@+id/startDateTextView"
-                    android:layout_width="349dp"
-                    android:layout_height="0dp"
-                    android:layout_marginBottom="5dp"
-                    android:text="start date"
+                    android:id="@+id/descriptionTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Description"
                     android:textColor="@color/font_color"
                     android:textSize="14sp"
-                    app:layout_constraintBottom_toTopOf="@+id/dueDateTextView"
-                    app:layout_constraintTop_toBottomOf="@+id/descriptionTextView"
-                    tools:layout_editor_absoluteX="6dp" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/titleTextView" />
+
+            <TextView
+                    android:id="@+id/startDateTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Start date"
+                    android:textColor="@color/font_color"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/descriptionTextView" />
+
+            <TextView
+                    android:id="@+id/dueDateTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="Due date"
+                    android:textColor="@color/font_color"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/startDateTextView" />
 
             <Button
                     android:id="@+id/btnAddMember"
-                    android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
                     android:backgroundTint="@color/theme"
                     android:textColor="@color/font_color"
                     android:text="Team Members"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/button4"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-            <Button
-                    android:id="@+id/button4"
-                    android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_weight="1"
-                    android:backgroundTint="@color/theme"
-                    android:textColor="@color/font_color"
-                    android:text="Create Task"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/btnAddMember" />
-
-                  <TextView
-                    android:id="@+id/dueDateTextView"
-                    android:layout_width="368dp"
-                    android:layout_height="0dp"
-                    android:layout_marginBottom="14dp"
-                    android:text="Due-date"
-                    app:layout_constraintBottom_toTopOf="@+id/button4"
-                    app:layout_constraintTop_toBottomOf="@+id/startDateTextView"
-                    tools:layout_editor_absoluteX="4dp" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/dueDateTextView"
+                    android:layout_marginStart="116dp"
+                    app:layout_constraintVertical_bias="1.0" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </LinearLayout>
 </androidx.cardview.widget.CardView>
