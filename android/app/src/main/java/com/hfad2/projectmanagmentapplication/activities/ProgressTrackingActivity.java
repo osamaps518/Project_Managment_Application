@@ -345,22 +345,6 @@ public class ProgressTrackingActivity extends AppCompatActivity {
      *
      * @param taskId ID of task to remove
      */
-//    private void removeTask(String taskId) {
-//        repository.removeTask(taskId, new OperationCallback<Boolean>() {
-//            @Override
-//            public void onSuccess(Boolean result) {
-//                loadTasks();
-//                Toast.makeText(ProgressTrackingActivity.this,
-//                        "Task removed successfully", Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onError(String error) {
-//                Toast.makeText(ProgressTrackingActivity.this,
-//                        "Error removing task: " + error, Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
     private void removeTask(String taskId) {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Task")
