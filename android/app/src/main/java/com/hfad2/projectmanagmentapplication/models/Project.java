@@ -138,4 +138,8 @@ public class Project {
     public Date getDueDate() {
         return dueDate;
     }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
 }

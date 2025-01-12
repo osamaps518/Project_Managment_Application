@@ -14,15 +14,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.hfad2.projectmanagmentapplication.R;
+import com.hfad2.projectmanagmentapplication.config.APIConfig;
 import com.hfad2.projectmanagmentapplication.models.Project;
 import com.hfad2.projectmanagmentapplication.models.User;
 import com.hfad2.projectmanagmentapplication.repositories.MessageRepository;
 import com.hfad2.projectmanagmentapplication.repositories.OperationCallback;
 import com.hfad2.projectmanagmentapplication.repositories.VolleyMessageRepository;
+import com.hfad2.projectmanagmentapplication.utils.SessionManager;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,6 +52,12 @@ public class MessageSendingActivity extends AppCompatActivity {
     private List<Project> userProjects;
     private List<User> projectMembers;
 
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private NavigationManager navigationManager;
+
+
+
     /**
      * Initializes activity state and UI components. Validates required user and project IDs.
      * Sets up views, repository, and handles any incoming reply intents.
@@ -59,10 +69,12 @@ public class MessageSendingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_messages);
 
-        currentUserId = getIntent().getStringExtra("user_id");
-        projectId = getIntent().getStringExtra("project_id");
+        currentUserId = SessionManager.getCurrentUserId();
+        Log.d("MessageSending", "Current user ID: " + currentUserId);
+//        currentUserId = getIntent().getStringExtra(APIConfig.PARAM_USER_ID);
+//        projectId = getIntent().getStringExtra(APIConfig.PARAM_PROJECT_ID);
 
-        if (currentUserId == null || projectId == null) {
+        if (currentUserId == null) {
             Toast.makeText(this, "Missing required information", Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -129,6 +141,11 @@ public class MessageSendingActivity extends AppCompatActivity {
                 recipientSpinner.setEnabled(false);
             }
         });
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        navigationManager = new NavigationManager(this, drawerLayout, navigationView);
+        navigationManager.setupMenuButton(btnMenu);
     }
 
     /**

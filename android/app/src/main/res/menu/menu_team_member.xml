@@ -3,10 +3,4 @@
     <item
             android:id="@+id/action_remove"
             android:title="@string/remove_member" />
-    <item
-            android:id="@+id/action_view_task"
-            android:title="@string/view_assigned_task" />
-    <item
-            android:id="@+id/action_mark_inactive"
-            android:title="@string/mark_as_inactive" />
 </menu>

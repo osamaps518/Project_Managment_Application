@@ -10,13 +10,9 @@
                 android:icon="@drawable/ic_notifications"
                 android:title="Notifications" />
         <item
-                android:id="@+id/nav_progress"
-                android:icon="@drawable/ic_timeline"
-                android:title="Progress Tracking" />
-        <item
-                android:id="@+id/nav_profile"
-                android:icon="@drawable/ic_person"
-                android:title="Profile" />
+                android:id="@+id/nav_send_message"
+                android:icon="@drawable/ic_email"
+                android:title="Send Message" />
     </group>
 
     <item android:title="Account">

@@ -175,44 +175,67 @@ public class VolleyProgressTrackingRepository implements ProgressTrackingReposit
                            TaskPriority priority, Date dueDate, String assignedTo,
                            OperationCallback<Boolean> callback) {
 
-        StringRequest request = new StringRequest(Request.Method.POST, APIConfig.ADD_TASK,
-                response -> {
-                    try {
-                        JSONObject jsonResponse = new JSONObject(response);
-                        boolean isSuccess = !jsonResponse.getBoolean("error");
-                        if (isSuccess) {
-                            callback.onSuccess(true);
-                        } else {
-                            callback.onError(jsonResponse.getString("message"));
-                        }
-                    } catch (JSONException e) {
-                        callback.onError("Error parsing server response: " + e.getMessage());
+        // First check if the employee already has a task in this project
+        getAllTasks(projectId, new OperationCallback<List<Task>>() {
+            @Override
+            public void onSuccess(List<Task> tasks) {
+                boolean hasExistingTask = tasks.stream()
+                        .anyMatch(task ->
+                                task.getProjectId().equals(projectId) &&
+                                        task.getAssignedEmployee().getUserId().equals(assignedTo) &&
+                                        task.getStatus() != TaskStatus.COMPLETED
+                        );
+
+                if (hasExistingTask) {
+                    callback.onError("This employee already has an active task in this project");
+                    return;
+                }
+
+                // If no existing task, proceed with task creation
+                StringRequest request = new StringRequest(Request.Method.POST, APIConfig.ADD_TASK,
+                        response -> {
+                            try {
+                                JSONObject jsonResponse = new JSONObject(response);
+                                boolean isSuccess = !jsonResponse.getBoolean("error");
+                                if (isSuccess) {
+                                    callback.onSuccess(true);
+                                } else {
+                                    callback.onError(jsonResponse.getString("message"));
+                                }
+                            } catch (JSONException e) {
+                                callback.onError("Error parsing server response: " + e.getMessage());
+                            }
+                        },
+                        error -> handleVolleyError(error, callback)) {
+
+                    @Override
+                    protected Map<String, String> getParams() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put(APIConfig.PARAM_PROJECT_ID, projectId);
+                        params.put(APIConfig.PARAM_TITLE, title);
+                        params.put(APIConfig.PARAM_DESCRIPTION, description);
+                        params.put(APIConfig.PARAM_PRIORITY, priority.name());
+                        params.put(APIConfig.PARAM_DUE_DATE, dateFormat.format(dueDate));
+                        params.put(APIConfig.PARAM_ASSIGNED_TO, assignedTo);
+                        return params;
                     }
-                },
-                error -> handleVolleyError(error, callback)) {
+                };
+
+                request.setRetryPolicy(new DefaultRetryPolicy(
+                        30000,  // 30 seconds timeout
+                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+                ));
+
+                queue.add(request);
+            }
 
             @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put(APIConfig.PARAM_PROJECT_ID, projectId);
-                params.put(APIConfig.PARAM_TITLE, title);
-                params.put(APIConfig.PARAM_DESCRIPTION, description);
-                params.put(APIConfig.PARAM_PRIORITY, priority.name());
-                params.put(APIConfig.PARAM_DUE_DATE, dateFormat.format(dueDate));
-                params.put(APIConfig.PARAM_ASSIGNED_TO, assignedTo);
-                return params;
+            public void onError(String error) {
+                callback.onError("Error checking existing tasks: " + error);
             }
-        };
-
-        request.setRetryPolicy(new DefaultRetryPolicy(
-                30000,  // 30 seconds timeout
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
-        ));
-
-        queue.add(request);
+        });
     }
-
        /**
      * Parses JSON response containing task list.
      * Creates Task objects with temporary User and Project references.
@@ -220,21 +243,36 @@ public class VolleyProgressTrackingRepository implements ProgressTrackingReposit
      * @param response JSON array of task data
      * @param callback Returns parsed List<Task>
      */
-    private void parseTaskList(String response, OperationCallback<List<Task>> callback) {
-        try {
-            JSONArray jsonArray = new JSONArray(response);
-            List<Task> tasks = new ArrayList<>();
+       private void parseTaskList(String response, OperationCallback<List<Task>> callback) {
+           try {
+               JSONObject jsonResponse = new JSONObject(response);
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject obj = jsonArray.getJSONObject(i);
-                tasks.add(parseTaskFromJson(obj));
-            }
+               // Check if there's an error
+               if (jsonResponse.has("error") && jsonResponse.getBoolean("error")) {
+                   callback.onError(jsonResponse.getString("message"));
+                   return;
+               }
 
-            callback.onSuccess(tasks);
-        } catch (JSONException | ParseException e) {
-            callback.onError(APIConfig.ERROR_PARSE + ": " + e.getMessage());
-        }
-    }
+               // Get the data array from the response
+               JSONArray jsonArray;
+               if (jsonResponse.has("data")) {
+                   jsonArray = jsonResponse.getJSONArray("data");
+               } else {
+                   // For backward compatibility, try parsing the response directly as array
+                   jsonArray = new JSONArray(response);
+               }
+
+               List<Task> tasks = new ArrayList<>();
+               for (int i = 0; i < jsonArray.length(); i++) {
+                   JSONObject obj = jsonArray.getJSONObject(i);
+                   tasks.add(parseTaskFromJson(obj));
+               }
+
+               callback.onSuccess(tasks);
+           } catch (JSONException | ParseException e) {
+               callback.onError("Error parsing server response: " + e.getMessage());
+           }
+       }
 
     /**
      * Creates a Task object from JSON data.
@@ -245,21 +283,22 @@ public class VolleyProgressTrackingRepository implements ProgressTrackingReposit
      * @return Parsed Task object
      */
     private Task parseTaskFromJson(JSONObject obj) throws JSONException, ParseException {
-        // Updated to match new schema structure
+        // Parse user data
         User assignedUser = new User(
                 obj.getString("user_id"),
-                obj.getString("username"),  // Using username since email was removed
+                obj.getString("username"),
                 obj.getString("full_name"),
-                obj.getString("username"),  // Username used twice since email was removed
-                "default_profile"  // Default profile image
+                obj.getString("username"),
+                "default_profile"
         );
 
         // Get role from employees table
         String role = obj.has("role") ? obj.getString("role") : "Employee";
         Employee assignedEmployee = new Employee(assignedUser, role);
 
-        // Create Project object
+        // Create Project object with both ID and title
         Project project = new Project();
+        project.setProjectId(obj.getString("project_id")); // Add this line to set project ID
         project.setTitle(obj.getString("project_title"));
 
         // Parse task data
@@ -271,13 +310,14 @@ public class VolleyProgressTrackingRepository implements ProgressTrackingReposit
                 dateFormat.parse(obj.getString("due_date"))
         );
 
-        task.setTaskId(obj.getString("task_id")); // Make sure to set the task ID
+        task.setTaskId(obj.getString("task_id"));
         task.setStatus(TaskStatus.valueOf(obj.getString("status")));
         task.setAssignedEmployee(assignedEmployee);
+        task.setProjectId(obj.getString("project_id")); // Set project ID in task as well
 
         return task;
     }
-//
+
     /**
      * Parses basic boolean response from server.
      * Expects JSON with "error" field.

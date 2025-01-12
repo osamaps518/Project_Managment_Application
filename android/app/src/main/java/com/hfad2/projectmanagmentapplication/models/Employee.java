@@ -130,4 +130,8 @@ public class Employee {
     public String toString() {
         return "Employee{" + getUserName() + "," + getRole() + "}";
     }
+
+    public void setAssignedTaskByProject(String assignedTask) {
+        assignedTasks.add(new Task(assignedTask));
+    }
 }

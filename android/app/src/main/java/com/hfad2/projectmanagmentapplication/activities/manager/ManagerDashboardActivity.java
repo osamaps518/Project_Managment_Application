@@ -26,7 +26,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ManagerDashboardActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
@@ -70,6 +72,16 @@ public class ManagerDashboardActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        projectAdapter.setOnDeleteClickListener(project -> {
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Delete Project")
+                    .setMessage("Are you sure you want to delete project '" + project.getTitle() + "'? This action cannot be undone.")
+                    .setPositiveButton("Delete", (dialog, which) -> deleteProject(project))
+                    .setNegativeButton("Cancel", null)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        });
+
         fab.setOnClickListener(view -> {
             Intent intent = new Intent(ManagerDashboardActivity.this, CreateNewProject.class);
             intent.putExtra(APIConfig.PARAM_MANAGER_ID, managerId);
@@ -82,6 +94,40 @@ public class ManagerDashboardActivity extends AppCompatActivity {
         navigationManager = new NavigationManager(this, drawerLayout, navigationView);
         navigationManager.setupMenuButton(btnMenu);
         fetchProjects();
+    }
+
+
+    private void deleteProject(Project project) {
+        String url = APIConfig.DELETE_PROJECT;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                response -> {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        if (!jsonResponse.getBoolean("error")) {
+                            Toast.makeText(this, "Project deleted successfully", Toast.LENGTH_SHORT).show();
+                            // Refresh the projects list
+                            fetchProjects();
+                        } else {
+                            Toast.makeText(this, "Error: " + jsonResponse.getString("message"),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(this, "Error parsing response", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> Toast.makeText(this, "Network error occurred", Toast.LENGTH_SHORT).show()
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("project_id", project.getProjectId());
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(this).add(stringRequest);
     }
 
     @Override

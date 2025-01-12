@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import android.widget.Spinner;
@@ -30,12 +31,15 @@ import com.hfad2.projectmanagmentapplication.R;
 import com.hfad2.projectmanagmentapplication.activities.manager.AddTaskActivity;
 import com.hfad2.projectmanagmentapplication.config.APIConfig;
 import com.hfad2.projectmanagmentapplication.models.CardData;
+import com.hfad2.projectmanagmentapplication.models.Notification;
 import com.hfad2.projectmanagmentapplication.models.Task;
 import com.hfad2.projectmanagmentapplication.models.TaskComment;
 import com.hfad2.projectmanagmentapplication.models.TaskStatus;
 import com.hfad2.projectmanagmentapplication.repositories.OperationCallback;
 import com.hfad2.projectmanagmentapplication.repositories.ProgressTrackingRepository;
+import com.hfad2.projectmanagmentapplication.repositories.TaskCommentRepository;
 import com.hfad2.projectmanagmentapplication.repositories.VolleyProgressTrackingRepository;
+import com.hfad2.projectmanagmentapplication.repositories.VolleyTaskCommentRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,7 +87,6 @@ public class ProgressTrackingActivity extends AppCompatActivity {
     public static final int VIEW_MODE_ALL_TASKS = 1;  // Opened from navigation
     public static final int VIEW_MODE_PROJECT_TASKS = 2;  // Opened from project card
 
-    // TODO: Make sure that you actually need the projectId, otherwise remove it
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,6 +126,15 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         Log.d("ProgressTrackingActivity", "onCreate completed");
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Reload tasks whenever activity becomes visible
+        if (projectManagerId != null) {
+            loadTasks();
+        }
+        Log.d("ProgressTrackingActivity", "Tasks reloaded in onResume");
+    }
 
     /**
      * Initializes all UI components and sets up the repository.
@@ -333,21 +345,45 @@ public class ProgressTrackingActivity extends AppCompatActivity {
      *
      * @param taskId ID of task to remove
      */
+//    private void removeTask(String taskId) {
+//        repository.removeTask(taskId, new OperationCallback<Boolean>() {
+//            @Override
+//            public void onSuccess(Boolean result) {
+//                loadTasks();
+//                Toast.makeText(ProgressTrackingActivity.this,
+//                        "Task removed successfully", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onError(String error) {
+//                Toast.makeText(ProgressTrackingActivity.this,
+//                        "Error removing task: " + error, Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
     private void removeTask(String taskId) {
-        repository.removeTask(taskId, new OperationCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean result) {
-                loadTasks();
-                Toast.makeText(ProgressTrackingActivity.this,
-                        "Task removed successfully", Toast.LENGTH_SHORT).show();
-            }
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Task")
+                .setMessage("Are you sure you want to delete this task? This action cannot be undone.")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    repository.removeTask(taskId, new OperationCallback<Boolean>() {
+                        @Override
+                        public void onSuccess(Boolean result) {
+                            loadTasks();
+                            Toast.makeText(ProgressTrackingActivity.this,
+                                    "Task removed successfully", Toast.LENGTH_SHORT).show();
+                        }
 
-            @Override
-            public void onError(String error) {
-                Toast.makeText(ProgressTrackingActivity.this,
-                        "Error removing task: " + error, Toast.LENGTH_SHORT).show();
-            }
-        });
+                        @Override
+                        public void onError(String error) {
+                            Toast.makeText(ProgressTrackingActivity.this,
+                                    "Error removing task: " + error, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                })
+                .setNegativeButton("Cancel", null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     /**
@@ -368,24 +404,77 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         ImageButton sendButton = commentView.findViewById(R.id.btn_send_comment);
 
         commentsRecycler.setLayoutManager(new LinearLayoutManager(this));
-        CommentAdapter adapter = new CommentAdapter(this, task.getComments());
+        CommentAdapter adapter = new CommentAdapter(this, new ArrayList<>());
         commentsRecycler.setAdapter(adapter);
+
+        // Create repository instance
+        TaskCommentRepository commentRepository = new VolleyTaskCommentRepository(this);
+
+        // Load existing comments when bottom sheet opens
+        commentRepository.getTaskComments(task.getTaskId(), new OperationCallback<List<Notification>>() {
+            @Override
+            public void onSuccess(List<Notification> comments) {
+                if (comments != null && !comments.isEmpty()) {
+                    adapter.setComments(comments);
+                    // Scroll to the last comment
+                    commentsRecycler.post(() ->
+                            commentsRecycler.scrollToPosition(adapter.getItemCount() - 1));
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(ProgressTrackingActivity.this,
+                        "Error loading comments: " + error,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
 
         sendButton.setOnClickListener(v -> {
             String content = commentInput.getText().toString().trim();
             if (!content.isEmpty()) {
-                TaskComment newComment = new TaskComment(task.getAssignedEmployee().getUserDetails(), task, content);
-                task.getComments().add(newComment);
-                adapter.addComment(newComment);
-                commentInput.setText("");
-                commentsRecycler.scrollToPosition(adapter.getItemCount() - 1);
+                commentRepository.addTaskComment(
+                        task.getTaskId(),
+                        projectManagerId, // Current user (sender)
+                        task.getProject().getProjectId(),
+                        task.getAssignedEmployee().getUserId(), // Task assignee (receiver)
+                        content,
+                        new OperationCallback<Boolean>() {
+                            @Override
+                            public void onSuccess(Boolean result) {
+                                commentInput.setText("");
+                                // Reload comments to show the new one
+                                commentRepository.getTaskComments(task.getTaskId(),
+                                        new OperationCallback<List<Notification>>() {
+                                            @Override
+                                            public void onSuccess(List<Notification> comments) {
+                                                adapter.setComments(comments);
+                                                commentsRecycler.scrollToPosition(
+                                                        adapter.getItemCount() - 1);
+                                            }
+
+                                            @Override
+                                            public void onError(String error) {
+                                                Toast.makeText(ProgressTrackingActivity.this,
+                                                        "Error refreshing comments: " + error,
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                            }
+
+                            @Override
+                            public void onError(String error) {
+                                Toast.makeText(ProgressTrackingActivity.this,
+                                        "Error sending comment: " + error,
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
             }
         });
 
         bottomSheet.setContentView(commentView);
         bottomSheet.show();
     }
-
 
     /**
      * Configures search functionality in toolbar.

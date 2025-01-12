@@ -20,7 +20,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@color/cards_background"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                app:layout_constraintStart_toStartOf="@+id/btnAddMember"
+                app:layout_constraintEnd_toStartOf="@+id/btnAddMember">
 
             <TextView
                     android:id="@+id/titleTextView"
@@ -90,8 +92,24 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/dueDateTextView"
-                    android:layout_marginStart="116dp"
-                    app:layout_constraintVertical_bias="1.0" />
+                    android:layout_marginStart="180dp"
+                    app:layout_constraintVertical_bias="0.0" />
+
+            <Button
+                    android:id="@+id/btnDelete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:backgroundTint="@color/theme"
+                    android:textColor="@color/font_color"
+                    android:text="Delete Project"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/dueDateTextView"
+                    android:layout_marginStart="28dp"
+                    app:layout_constraintVertical_bias="0.0" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>

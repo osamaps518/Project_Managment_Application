@@ -6,7 +6,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.ImageView;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
@@ -63,11 +62,11 @@ public class NavigationManager {
         } else if (menuItem.getItemId() == R.id.nav_notifications) {
             intent = new Intent(activity, NotificationActivity.class);
             intent.putExtra(APIConfig.PARAM_USER_ID, SessionManager.getCurrentUserId());
-        } else if (menuItem.getItemId() == R.id.nav_progress) {
-            intent = new Intent(activity, ProgressTrackingActivity.class);
-            intent.putExtra(APIConfig.PARAM_MANAGER_ID, SessionManager.getCurrentUserId());
-            intent.putExtra(ProgressTrackingActivity.EXTRA_VIEW_MODE, ProgressTrackingActivity.VIEW_MODE_ALL_TASKS);
-        }  else if (menuItem.getItemId() == R.id.nav_logout) {
+        }
+        else if (menuItem.getItemId() == R.id.nav_send_message) {
+            intent = new Intent(activity, MessageSendingActivity.class);
+        }
+        else if (menuItem.getItemId() == R.id.nav_logout) {
             // Clear session data
             SessionManager.clearSession(activity);
             intent = new Intent(activity, LoginActivity.class);

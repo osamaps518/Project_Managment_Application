@@ -1,33 +1,61 @@
 <?php
-// Retrieves the current active task assigned to a team member
-// Method: GET
-// Parameters: project_id, employee_id
-// Returns: JSON object with task details or null if no active task
-
-
 require_once '../config/database.php';
 
-if(isset($_GET['project_id']) && isset($_GET['employee_id'])) {
-    $database = new Database();
-    $conn = $database->connect();
+if ($_SERVER['REQUEST_METHOD'] != "GET") {
+    echo json_encode([
+        "error" => true,
+        "message" => "Invalid request method"
+    ]);
+    exit;
+}
+
+if (!isset($_GET['project_id']) || !isset($_GET['employee_id'])) {
+    echo json_encode([
+        "error" => true,
+        "message" => "Missing required parameters"
+    ]);
+    exit;
+}
+
+try {
+    $db = new Database();
+    $conn = $db->connect();
     
     $project_id = $conn->real_escape_string($_GET['project_id']);
-
-    $user_id = $conn->real_escape_string($_GET['user_id']);
-    $sql = "SELECT * FROM tasks 
-        WHERE project_id = '$project_id' 
-        AND assigned_to = '$user_id' 
-        AND status != 'COMPLETED'
-        LIMIT 1";
+    $employee_id = $conn->real_escape_string($_GET['employee_id']);
     
-    $result = $conn->query($sql);
+    // Join with tasks and projects to get task and project details
+    $sql = "SELECT t.*, p.title as project_title 
+            FROM tasks t
+            JOIN projects p ON t.project_id = p.project_id
+            WHERE t.project_id = ? 
+            AND t.assigned_to = ? 
+            AND t.status != 'COMPLETED'
+            LIMIT 1";
     
-    if($row = mysqli_fetch_assoc($result)) {
-        echo json_encode($row);
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ss", $project_id, $employee_id);
+    
+    if ($stmt->execute()) {
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        
+        echo json_encode([
+            "error" => false,
+            "data" => $row  // This will be null if no task is found
+        ]);
     } else {
-        echo json_encode(null);
+        throw new Exception("Error executing query: " . $stmt->error);
     }
     
-    $database->closeConnection();
+} catch (Exception $e) {
+    echo json_encode([
+        "error" => true,
+        "message" => $e->getMessage()
+    ]);
+} finally {
+    if (isset($db)) {
+        $db->closeConnection();
+    }
 }
 ?>

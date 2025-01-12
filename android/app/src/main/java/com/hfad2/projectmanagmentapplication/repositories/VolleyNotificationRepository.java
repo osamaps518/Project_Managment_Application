@@ -102,16 +102,6 @@ public class VolleyNotificationRepository implements NotificationRepository {
      * @param showArchived A boolean indicating whether to show archived notifications.
      * @param callback     The callback to handle the list of notifications or an error.
      */
-//    @Override
-//    public void loadNotifications(boolean showArchived,
-//                                  OperationCallback<List<Notification>> callback) {
-//        String url = APIConfig.GET_NOTIFICATIONS + "?" +
-//                APIConfig.PARAM_SHOW_ARCHIVED + "=" + showArchived;
-//        StringRequest request = new StringRequest(Request.Method.GET, url,
-//                response -> parseNotificationList(response, callback),
-//                error -> handleVolleyError(error, callback));
-//        queue.add(request);
-//    }
     @Override
     public void loadNotifications(String userId, boolean showArchived,
                                   OperationCallback<List<Notification>> callback) {

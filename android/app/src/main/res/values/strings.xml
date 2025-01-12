@@ -33,6 +33,7 @@
     <string name="project_description">Project Description :</string>
     <string name="enter_project_name">Enter Project Name</string>
     <string name="project_name">Project Name:</string>
+    <string name="send_message">send message</string>
 
     <string-array name="user_types">
         <item>manager</item>

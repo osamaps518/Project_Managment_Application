@@ -84,6 +84,18 @@ public class AddTaskActivity extends AppCompatActivity {
         prioritySpinner = findViewById(R.id.priority_spinner);
         projectSpinner = findViewById(R.id.project_spinner);
         userSpinner = findViewById(R.id.user_spinner);
+        dueDatePicker = findViewById(R.id.due_date_picker); // Initialize DatePicker
+
+        // Set default date to tomorrow
+        Calendar tomorrow = Calendar.getInstance();
+        tomorrow.add(Calendar.DAY_OF_MONTH, 1);
+        if (dueDatePicker != null) {
+            dueDatePicker.updateDate(
+                    tomorrow.get(Calendar.YEAR),
+                    tomorrow.get(Calendar.MONTH),
+                    tomorrow.get(Calendar.DAY_OF_MONTH)
+            );
+        }
 
         // Set up priority spinner
         ArrayAdapter<TaskPriority> priorityAdapter = new ArrayAdapter<>(
@@ -201,11 +213,23 @@ public class AddTaskActivity extends AppCompatActivity {
             return;
         }
 
+        if (dueDatePicker == null) {
+            Toast.makeText(this, "Due date picker not initialized", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         Calendar calendar = Calendar.getInstance();
         calendar.set(dueDatePicker.getYear(), dueDatePicker.getMonth(),
                 dueDatePicker.getDayOfMonth());
 
-        taskRepository.createTask(projectId, title, description, priority,
+        // Validate that due date is not in the past
+        Calendar today = Calendar.getInstance();
+        if (calendar.before(today)) {
+            Toast.makeText(this, "Due date cannot be in the past", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+               taskRepository.createTask(projectId, title, description, priority,
                 calendar.getTime(), selectedUser.getUserId(),
                 new OperationCallback<Boolean>() {
                     @Override

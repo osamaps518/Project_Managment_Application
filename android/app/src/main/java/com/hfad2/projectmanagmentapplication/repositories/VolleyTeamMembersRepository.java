@@ -157,27 +157,6 @@ public class VolleyTeamMembersRepository implements TeamMembersRepository {
     }
 
     /**
-     * Finds an employee by their user ID, typically used for member verification
-     * before adding to a project.
-     *
-     * @param userId The unique identifier of the user to find
-     * @param callback Callback to handle the operation result:
-     *                 - onSuccess returns Employee object if found
-     *                 - onError returns error message if user not found or lookup fails
-     * @throws VolleyError if network request fails
-     * @throws JSONException if response parsing fails
-     */
-    @Override
-    public void findEmployee(String userId, OperationCallback<Employee> callback) {
-        String url = APIConfig.FIND_EMPLOYEE + "?user_id=" + userId;
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                response -> parseSingleEmployee(response, callback),
-                error -> handleVolleyError(error, callback));
-
-        queue.add(stringRequest);
-    }
-
-    /**
      * Retrieves the currently assigned task for a team member in a project.
      * Returns null if no active task is assigned.
      *
@@ -191,8 +170,10 @@ public class VolleyTeamMembersRepository implements TeamMembersRepository {
      */
     @Override
     public void getAssignedTask(String projectId, String employeeId, OperationCallback<Task> callback) {
-        String url = APIConfig.GET_ASSIGNED_TASK + "?" + APIConfig.PARAM_PROJECT_ID + "=" + projectId
-                + "&" + APIConfig.PARAM_EMPLOYEE_ID + "=" + employeeId;
+        String url = String.format("%s?%s=%s&%s=%s",
+                APIConfig.GET_ASSIGNED_TASK,
+                APIConfig.PARAM_PROJECT_ID, Uri.encode(projectId),
+                APIConfig.PARAM_EMPLOYEE_ID, Uri.encode(employeeId));
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> parseTask(response, callback),
@@ -203,22 +184,43 @@ public class VolleyTeamMembersRepository implements TeamMembersRepository {
 
     private void parseTask(String response, OperationCallback<Task> callback) {
         try {
-            if (response.equals("null")) {
+            // Handle empty or null response
+            if (response == null || response.trim().isEmpty() || response.equals("null")) {
                 callback.onSuccess(null);
                 return;
             }
 
-            JSONObject obj = new JSONObject(response);
+            JSONObject jsonResponse = new JSONObject(response);
+
+            if (jsonResponse.has("error") && jsonResponse.getBoolean("error")) {
+                callback.onError(jsonResponse.getString("message"));
+                return;
+            }
+
+            JSONObject data = jsonResponse.optJSONObject("data");
+            if (data == null) {
+                callback.onSuccess(null);
+                return;
+            }
+
+            // Create Task object from data
             Task task = new Task(
-                    obj.getString("title"),
-                    obj.getString("description"),
-                    null, // Project will be set by the caller
-                    TaskPriority.valueOf(obj.getString("priority")),
-                    new Date(obj.getLong("due_date"))
+                    data.getString("title"),
+                    data.getString("description"),
+                    null,  // Project will be set by the caller
+                    TaskPriority.valueOf(data.getString("priority")),
+                    new Date(data.getLong("due_date") * 1000)  // Convert Unix timestamp to Java Date
             );
+
+            // Set task ID
+            if (data.has("task_id")) {
+                task.setTaskId(data.getString("task_id"));
+            }
+
             callback.onSuccess(task);
+
         } catch (JSONException e) {
-            callback.onError(APIConfig.ERROR_PARSE + ": " + e.getMessage());
+            callback.onError("Error parsing task data: " + e.getMessage());
         }
     }
 
@@ -243,6 +245,7 @@ public class VolleyTeamMembersRepository implements TeamMembersRepository {
             callback.onError(APIConfig.ERROR_PARSE + ": " + e.getMessage());
         }
     }
+
 
     /**
      * Parses JSON response containing a single employee.

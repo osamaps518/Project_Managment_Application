@@ -19,6 +19,15 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
     public interface OnAddMemberClickListener {
         void onAddMemberClick(Project project);
     }
+    public interface OnDeleteClickListener {
+        void onDeleteClick(Project project);
+    }
+
+    private OnDeleteClickListener deleteListener;
+
+    public void setOnDeleteClickListener(OnDeleteClickListener listener) {
+        this.deleteListener = listener;
+    }
     private List<Project> projects;
     private OnItemClickListener listener;  // Note: Now using our own interface
     private OnAddMemberClickListener addMemberListener;
@@ -28,17 +37,11 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
     }
 
 
-//    @Override
-//    public ProjectViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//        View view = LayoutInflater.from(parent.getContext())
-//                .inflate(R.layout.activity_project_adapter, parent, false);
-//        return new ProjectViewHolder(view, listener);  // Pass listener to ViewHolder
-//    }
     @Override
     public ProjectViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.activity_project_adapter, parent, false);
-        return new ProjectViewHolder(view, listener, addMemberListener, projects);
+        return new ProjectViewHolder(view, listener, addMemberListener, deleteListener, projects);
     }
 
     @SuppressLint("RestrictedApi")
@@ -59,16 +62,18 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
     // Modified ViewHolder to handle clicks
     public static class ProjectViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView, descriptionTextView, startDateTextView, dueDateTextView;
-        Button btnAddMember;
+        Button btnAddMember, btnDelete;
 
         public ProjectViewHolder(View itemView, final OnItemClickListener listener, final OnAddMemberClickListener addMemberListener,
-                                 final List<Project> projects) {
+                                 final OnDeleteClickListener deleteListener,final List<Project> projects) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.titleTextView);
             descriptionTextView = itemView.findViewById(R.id.descriptionTextView);
             startDateTextView = itemView.findViewById(R.id.startDateTextView);
             dueDateTextView = itemView.findViewById(R.id.dueDateTextView);
             btnAddMember = itemView.findViewById(R.id.btnAddMember);
+            btnDelete = itemView.findViewById(R.id.btnDelete);
+
 
 
             // Set up click listener for the entire item view
@@ -80,6 +85,12 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
             btnAddMember.setOnClickListener(v -> {
                 if (addMemberListener != null && getAdapterPosition() != RecyclerView.NO_POSITION) {
                     addMemberListener.onAddMemberClick(projects.get(getAdapterPosition()));
+                }
+            });
+
+            btnDelete.setOnClickListener(v -> {
+                if (deleteListener != null && getAdapterPosition() != RecyclerView.NO_POSITION) {
+                    deleteListener.onDeleteClick(projects.get(getAdapterPosition()));
                 }
             });
         }

@@ -68,6 +68,7 @@ public class APIConfig {
     // Project management endpoints
     public static final String GET_PROJECTS = BASE_URL + "projects/get_projects.php";
     public static final String ADD_PROJECT = BASE_URL + "projects/add_project.php";
+    public static final String DELETE_PROJECT = BASE_URL + "projects/delete_project.php";
 
     // Team member endpoints
     public static final String GET_MEMBERS = BASE_URL + "team_members/get_members.php";

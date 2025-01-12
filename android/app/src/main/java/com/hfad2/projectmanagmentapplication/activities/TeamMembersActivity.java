@@ -28,12 +28,14 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.hfad2.projectmanagmentapplication.R;
+import com.hfad2.projectmanagmentapplication.config.APIConfig;
 import com.hfad2.projectmanagmentapplication.models.CardData;
 import com.hfad2.projectmanagmentapplication.models.Employee;
 import com.hfad2.projectmanagmentapplication.models.Task;
 import com.hfad2.projectmanagmentapplication.repositories.OperationCallback;
 import com.hfad2.projectmanagmentapplication.repositories.TeamMembersRepository;
 import com.hfad2.projectmanagmentapplication.repositories.VolleyTeamMembersRepository;
+import com.hfad2.projectmanagmentapplication.utils.SessionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -175,7 +177,7 @@ public class TeamMembersActivity extends AppCompatActivity {
                     CardData card = new CardData();
                     card.setLine1(employee.getUserName());
                     card.setLine2(employee.getRole());
-                    card.setLine3("Task: " + employee.getAssignedTaskByProject(projectId));
+                    card.setLine3("");
                     card.setImage(ContextCompat.getDrawable(TeamMembersActivity.this, getProfileImageResource(employee.getProfileImage())));
 
                     card.setData(employee);
@@ -225,39 +227,14 @@ public class TeamMembersActivity extends AppCompatActivity {
         PopupMenu popup = new PopupMenu(this, view);
         popup.inflate(R.menu.menu_team_member);
 
-        // Check if employee has assigned task
-        repository.getAssignedTask(projectId, ((Employee) item.getData()).getUserId(), new OperationCallback<Task>() {
-            @Override
-            public void onSuccess(Task task) {
-                MenuItem viewTask = popup.getMenu().findItem(R.id.action_view_task);
-                viewTask.setVisible(task != null);
-            }
-
-            @Override
-            public void onError(String error) {
-                MenuItem viewTask = popup.getMenu().findItem(R.id.action_view_task);
-                viewTask.setVisible(false);
-            }
-        });
-
         popup.setOnMenuItemClickListener(menuItem -> {
             int itemId = menuItem.getItemId();
             if (itemId == R.id.action_remove) {
                 removeMember(((Employee) item.getData()).getUserId());
                 return true;
-            } else if (itemId == R.id.action_view_task) {
-                Intent intent = new Intent(this, TaskDetailActivity.class);
-                intent.putExtra("employee_id", ((Employee) item.getData()).getUserId());
-                intent.putExtra("project_id", projectId);
-                startActivity(intent);
-                return true;
-            } else if (itemId == R.id.action_mark_inactive) {
-                markInactive(((Employee) item.getData()).getUserId());
-                return true;
             }
             return false;
         });
-
         popup.show();
     }
 
@@ -269,38 +246,31 @@ public class TeamMembersActivity extends AppCompatActivity {
      * @param employeeId ID of the employee to remove
      */
     private void removeMember(String employeeId) {
-        Log.d("TeamMembers", "Attempting to remove member: " + employeeId + " from project: " + projectId);
-        repository.removeMember(projectId, employeeId, new OperationCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean result) {
-                Log.d("TeamMembers", "Remove member result: " + result);
-                loadTeamMembers(); // Refresh list
-                Toast.makeText(TeamMembersActivity.this,
-                        "Member removed successfully", Toast.LENGTH_SHORT).show();
-            }
+        new AlertDialog.Builder(this)
+                .setTitle("Remove Team Member")
+                .setMessage("Are you sure you want to remove this team member from the project?")
+                .setPositiveButton("Remove", (dialog, which) -> {
+                    Log.d("TeamMembers", "Attempting to remove member: " + employeeId + " from project: " + projectId);
+                    repository.removeMember(projectId, employeeId, new OperationCallback<Boolean>() {
+                        @Override
+                        public void onSuccess(Boolean result) {
+                            Log.d("TeamMembers", "Remove member result: " + result);
+                            loadTeamMembers(); // Refresh list
+                            Toast.makeText(TeamMembersActivity.this,
+                                    "Member removed successfully", Toast.LENGTH_SHORT).show();
+                        }
 
-            @Override
-            public void onError(String error) {
-                Log.e("TeamMembers", "Error removing member: " + error);
-
-                Toast.makeText(TeamMembersActivity.this,
-                        "Error removing member: " + error, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    /**
-     * Marks a team member as inactive.
-     * Currently shows a placeholder toast message.
-     * TODO: Implement actual status change when backend supports it.
-     *
-     * @param employeeId ID of the employee to mark as inactive
-     */
-    private void markInactive(String employeeId) {
-        // Since Employee status isn't directly exposed in repository,
-        // we can notify user for now
-        Toast.makeText(this, "Member marked as inactive", Toast.LENGTH_SHORT).show();
-        // TODO: Implement when backend supports status changes
+                        @Override
+                        public void onError(String error) {
+                            Log.e("TeamMembers", "Error removing member: " + error);
+                            Toast.makeText(TeamMembersActivity.this,
+                                    "Error removing member: " + error, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                })
+                .setNegativeButton("Cancel", null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     /**
@@ -451,59 +421,6 @@ public class TeamMembersActivity extends AppCompatActivity {
             }
         });
     }
-//
-//    private void showAddMemberDialog() {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_member, null);
-//
-//        EditText userIdInput = dialogView.findViewById(R.id.user_id_input);
-//        Button searchButton = dialogView.findViewById(R.id.btn_search_user);
-//        TextView userInfoView = dialogView.findViewById(R.id.user_info);
-//
-//        final Employee[] selectedEmployee = new Employee[1];
-//
-//        searchButton.setOnClickListener(v -> {
-//            String userId = userIdInput.getText().toString();
-//            repository.findEmployee(userId, new OperationCallback<Employee>() {
-//                @Override
-//                public void onSuccess(Employee employee) {
-//                    selectedEmployee[0] = employee;
-//                    userInfoView.setText("Found: " + employee.getFullName());
-//                    userInfoView.setVisibility(View.VISIBLE);
-//                }
-//
-//                @Override
-//                public void onError(String error) {
-//                    userInfoView.setText("User not found");
-//                    userInfoView.setVisibility(View.VISIBLE);
-//                    selectedEmployee[0] = null;
-//                }
-//            });
-//        });
-//
-//        builder.setView(dialogView)
-//                .setTitle("Add Team Member")
-//                .setPositiveButton("Add", (dialog, which) -> {
-//                    if (selectedEmployee[0] != null) {
-//                        repository.addMember(projectId, selectedEmployee[0].getUserId(),
-//                                new OperationCallback<Boolean>() {
-//                                    @Override
-//                                    public void onSuccess(Boolean result) {
-//                                        loadTeamMembers();
-//                                    }
-//
-//                                    @Override
-//                                    public void onError(String error) {
-//                                        Toast.makeText(TeamMembersActivity.this,
-//                                                "Failed to add member: " + error,
-//                                                Toast.LENGTH_SHORT).show();
-//                                    }
-//                                });
-//                    }
-//                })
-//                .setNegativeButton("Cancel", null)
-//                .show();
-//    }
 
     private void showAddMemberDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

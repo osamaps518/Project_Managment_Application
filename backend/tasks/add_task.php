@@ -39,6 +39,27 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
         ]);
         exit;
     }
+
+    // Check if employee already has a task in this project
+    $check_existing_task = "SELECT COUNT(*) as task_count 
+                           FROM tasks 
+                           WHERE project_id = ? 
+                           AND assigned_to = ? 
+                           AND status != 'COMPLETED'";
+    
+    $stmt = $conn->prepare($check_existing_task);
+    $stmt->bind_param("ss", $project_id, $assigned_to);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $existing_tasks = $result->fetch_assoc()['task_count'];
+    
+    if ($existing_tasks > 0) {
+        echo json_encode([
+            "error" => true,
+            "message" => "Employee already has an active task in this project"
+        ]);
+        exit;
+    }
     
     // Generate a UUID for the task
     $task_id = uniqid();
@@ -56,7 +77,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
         echo json_encode([
             "error" => false,
             "message" => "Task added successfully!",
-            "task_id" => $task_id  // Return the created task ID for reference
+            "task_id" => $task_id
         ]);
     } else {
         echo json_encode([
