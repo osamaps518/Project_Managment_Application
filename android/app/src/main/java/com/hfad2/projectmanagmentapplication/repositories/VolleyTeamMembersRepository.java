@@ -17,6 +17,7 @@ import com.hfad2.projectmanagmentapplication.models.Employee;
 import com.hfad2.projectmanagmentapplication.models.Task;
 import com.hfad2.projectmanagmentapplication.models.TaskPriority;
 import com.hfad2.projectmanagmentapplication.models.User;
+import com.hfad2.projectmanagmentapplication.utils.SessionManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -238,7 +239,12 @@ public class VolleyTeamMembersRepository implements TeamMembersRepository {
             JSONArray jsonArray = new JSONArray(response);
             List<Employee> employees = new ArrayList<>();
             for (int i = 0; i < jsonArray.length(); i++) {
-                employees.add(parseEmployeeFromJson(jsonArray.getJSONObject(i)));
+                JSONObject employeeJson = jsonArray.getJSONObject(i);
+
+                // Skip if this is the current user
+                if (!employeeJson.getString("user_id").equals(SessionManager.getCurrentUserId())) {
+                    employees.add(parseEmployeeFromJson(employeeJson));
+                }
             }
             callback.onSuccess(employees);
         } catch (JSONException e) {

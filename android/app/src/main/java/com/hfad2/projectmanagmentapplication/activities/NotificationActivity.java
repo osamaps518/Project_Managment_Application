@@ -225,20 +225,10 @@ public class NotificationActivity extends AppCompatActivity {
                     archiveNotification(notification.getId());
                 }
                 return true;
-            } else if (itemId == R.id.action_view_profile) {
-                openSenderProfile(notification.getSenderId());
-                return true;
-            } else if (itemId == R.id.action_view_task &&
-                    notification.getType() == NotificationType.COMMENT) {
-                openTaskDetails(notification.getTaskId());
-                return true;
             }
             return false;
         });
 
-        popup.getMenu().findItem(R.id.action_view_task).setVisible(
-                notification.getType() == NotificationType.COMMENT
-        );
 
         popup.show();
     }
