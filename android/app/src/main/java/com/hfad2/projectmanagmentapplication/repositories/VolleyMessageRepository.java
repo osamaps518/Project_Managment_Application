@@ -13,6 +13,7 @@ import com.hfad2.projectmanagmentapplication.models.Notification;
 import com.hfad2.projectmanagmentapplication.models.NotificationType;
 import com.hfad2.projectmanagmentapplication.models.Project;
 import com.hfad2.projectmanagmentapplication.models.User;
+import com.hfad2.projectmanagmentapplication.utils.SessionManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -233,18 +234,22 @@ public class VolleyMessageRepository implements MessageRepository {
         try {
             JSONArray jsonArray = new JSONArray(response);
             List<User> users = new ArrayList<>();
+            String currentUserId = SessionManager.getCurrentUserId();
 
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject obj = jsonArray.getJSONObject(i);
-                User user = new User(
-                        obj.getString("user_id"),
-                        obj.getString("username"),
-                        obj.getString("full_name"),
-                        obj.getString("username"), // Using username instead of email
-                        "default_profile"
-                );
-                user.setUserType(obj.getString("user_type"));
-                users.add(user);
+                // Skip if this is the current user
+                if (!obj.getString("user_id").equals(currentUserId)) {
+                    User user = new User(
+                            obj.getString("user_id"),
+                            obj.getString("username"),
+                            obj.getString("full_name"),
+                            obj.getString("username"), // Using username instead of email
+                            "default_profile"
+                    );
+                    user.setUserType(obj.getString("user_type"));
+                    users.add(user);
+                }
             }
 
             callback.onSuccess(users);
@@ -252,4 +257,27 @@ public class VolleyMessageRepository implements MessageRepository {
             callback.onError(APIConfig.ERROR_PARSE + ": " + e.getMessage());
         }
     }
+//    private void parseUserList(String response, OperationCallback<List<User>> callback) {
+//        try {
+//            JSONArray jsonArray = new JSONArray(response);
+//            List<User> users = new ArrayList<>();
+//
+//            for (int i = 0; i < jsonArray.length(); i++) {
+//                JSONObject obj = jsonArray.getJSONObject(i);
+//                User user = new User(
+//                        obj.getString("user_id"),
+//                        obj.getString("username"),
+//                        obj.getString("full_name"),
+//                        obj.getString("username"), // Using username instead of email
+//                        "default_profile"
+//                );
+//                user.setUserType(obj.getString("user_type"));
+//                users.add(user);
+//            }
+//
+//            callback.onSuccess(users);
+//        } catch (JSONException e) {
+//            callback.onError(APIConfig.ERROR_PARSE + ": " + e.getMessage());
+//        }
+//    }
 }
