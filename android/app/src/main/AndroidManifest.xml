@@ -15,9 +15,7 @@
             android:theme="@style/Theme.ProjectManagmentApplication"
             android:usesCleartextTraffic="true"
             tools:targetApi="31">
-        <activity
-                android:name=".activities.CommentAdapter$AddTaskActivity"
-                android:exported="false" />
+
         <activity
                 android:name=".activities.employee.EmployeeDashboardActivity"
                 android:exported="false" />
@@ -45,11 +43,12 @@
                 android:name=".testing.TestProgressTrackingActivity"
                 android:exported="true" />
         <activity
+                android:name=".activities.manager.AddTaskActivity"
+                android:exported="false">
+        </activity>
+        <activity
                 android:name=".testing.TestTeamMembersActivity"
                 android:exported="true" />
-        <activity
-                android:name=".activities.BaseProjectActivity"
-                android:exported="false" />
         <activity
                 android:name=".activities.EmailDetailActivity"
                 android:exported="false" />

@@ -172,7 +172,7 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         statusFilterSpinner.setVisibility(View.GONE);
 
         fabAdd.setOnClickListener(v -> {
-            Intent intent = new Intent(this, CommentAdapter.class);
+            Intent intent = new Intent(this, AddTaskActivity.class);
             intent.putExtra(APIConfig.PARAM_MANAGER_ID, projectManagerId);
             intent.putExtra(EXTRA_VIEW_MODE, viewMode);
             if (viewMode == VIEW_MODE_PROJECT_TASKS) {
